@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DevIntensive</string>
+    <string name="layout_text_mobile_phone">Мобильный телефон</string>
 </resources>
