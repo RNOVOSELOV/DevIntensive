@@ -16,10 +16,8 @@
             android:layout_height="@dimen/spacing_xxlarge_112"
             android:orientation="horizontal"
             android:paddingTop="@dimen/padding_xxlarge_24"
-            android:paddingLeft="@dimen/padding_xxlarge_24"
-            android:paddingRight="@dimen/padding_xxlarge_24"
             android:paddingBottom="@dimen/padding_xxlarge_24"
-            android:background="@color/grey_light">
+            android:background="@color/grey">
 
 
             <LinearLayout
@@ -34,6 +32,11 @@
                     android:text="Рейтинг"/>
             </LinearLayout>
 
+            <View
+                android:layout_width="@dimen/line_height"
+                android:layout_height="match_parent"
+                android:background="@color/grey_light" />
+
             <LinearLayout
                 style="@style/panel_item"
                 android:layout_weight="3"
@@ -45,6 +48,11 @@
                     style="@style/panel_sub_item"
                     android:text="Написано строк кода"/>
             </LinearLayout>
+
+            <View
+                android:layout_width="@dimen/line_height"
+                android:layout_height="match_parent"
+                android:background="@color/grey_light" />
 
             <LinearLayout
                 style="@style/panel_item"
