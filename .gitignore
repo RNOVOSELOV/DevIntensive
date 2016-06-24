@@ -45,3 +45,5 @@ local.properties
 /gradlew.bat
 /gradle.properties
 /gradlew
+runConfigurations.xml
+gradle.xml
