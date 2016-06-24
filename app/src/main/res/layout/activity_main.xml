@@ -13,6 +13,55 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_xxlarge_112"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/padding_xxlarge_24"
+            android:paddingLeft="@dimen/padding_xxlarge_24"
+            android:paddingRight="@dimen/padding_xxlarge_24"
+            android:paddingBottom="@dimen/padding_xxlarge_24"
+            android:background="@color/grey_light">
+
+
+            <LinearLayout
+                style="@style/panel_item"
+                android:layout_weight="1"
+                android:layout_gravity="center">
+                <TextView
+                    style="@style/panel_sub_item"
+                    android:text="5"/>
+                <TextView
+                    style="@style/panel_sub_item"
+                    android:text="Рейтинг"/>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/panel_item"
+                android:layout_weight="3"
+                android:layout_gravity="center">
+                <TextView
+                    style="@style/panel_sub_item"
+                    android:text="25000"/>
+                <TextView
+                    style="@style/panel_sub_item"
+                    android:text="Написано строк кода"/>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/panel_item"
+                android:layout_weight="1"
+                android:layout_gravity="center">
+                <TextView
+                    style="@style/panel_sub_item"
+                    android:text="5"/>
+                <TextView
+                    style="@style/panel_sub_item"
+                    android:text="Проектов"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small_8"
             android:layout_marginTop="@dimen/spacing_small_8"
