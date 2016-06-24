@@ -15,12 +15,14 @@
 
     <style name="icon.right">
         <item name="android:layout_marginTop">@dimen/size_small_24</item>
-        <item name="android:layout_marginRight">@dimen/size_small_24</item>
+        <item name="android:layout_marginRight">@dimen/spacing_medium_32</item>
+        <item name="android:layout_gravity">top|right</item>
     </style>
 
     <style name="icon.left">
         <item name="android:layout_marginTop">@dimen/size_small_24</item>
-        <item name="android:layout_marginLeft">@dimen/size_small_24</item>
+        <item name="android:layout_marginLeft">@dimen/spacing_normal_16</item>
+        <item name="android:layout_gravity">top|left</item>
     </style>
 
 </resources>

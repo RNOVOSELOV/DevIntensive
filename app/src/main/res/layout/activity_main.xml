@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".ui.activities.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,13 +15,15 @@
 
         <ImageView
             style="@style/icon.left"
-            android:src="@drawable/ic_call_black_24dp"/>
+            android:src="@drawable/ic_call_black_24dp" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="@dimen/size_big_72"
+            android:layout_marginEnd="@dimen/spacing_normal_16"
             android:layout_marginLeft="@dimen/spacing_medium_32"
             android:layout_marginRight="@dimen/spacing_normal_16"
+            android:layout_marginStart="@dimen/spacing_medium_32"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -31,23 +33,237 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/et_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:fontFamily="sans-serif-condensed"
                     android:hint="@string/layout_text_mobile_phone"
-                    android:inputType="phone"/>
+                    android:inputType="phone"
+                    android:text="+79027888883"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey" />
             </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
         <ImageView
             style="@style/icon.right"
-            android:src="@drawable/ic_phone_in_talk_black_24dp"/>
+            android:src="@drawable/ic_phone_in_talk_black_24dp" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line_height"
         android:layout_marginLeft="@dimen/spacing_larger_72"
-        android:background="@color/grey_light"/>
+        android:layout_marginStart="@dimen/spacing_larger_72"
+        android:background="@color/grey_light" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_small_8"
+        android:layout_marginTop="@dimen/spacing_small_8"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/icon.left"
+            android:src="@drawable/ic_email_black_24dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_big_72"
+            android:layout_marginEnd="@dimen/spacing_normal_16"
+            android:layout_marginLeft="@dimen/spacing_medium_32"
+            android:layout_marginRight="@dimen/spacing_normal_16"
+            android:layout_marginStart="@dimen/spacing_medium_32"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:fontFamily="sans-serif-condensed"
+                    android:hint="@string/layout_text_e_mail"
+                    android:inputType="textEmailAddress"
+                    android:text="my_mail@mail.my"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            style="@style/icon.right"
+            android:src="@drawable/ic_send_black_24dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginLeft="@dimen/spacing_larger_72"
+        android:layout_marginStart="@dimen/spacing_larger_72"
+        android:background="@color/grey_light" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_small_8"
+        android:layout_marginTop="@dimen/spacing_small_8"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/icon.left"
+            android:src="@drawable/vk_circle" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_big_72"
+            android:layout_marginEnd="@dimen/spacing_normal_16"
+            android:layout_marginLeft="@dimen/spacing_medium_32"
+            android:layout_marginRight="@dimen/spacing_normal_16"
+            android:layout_marginStart="@dimen/spacing_medium_32"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_vk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:fontFamily="sans-serif-condensed"
+                    android:hint="@string/layout_text_vk"
+                    android:text="vk.com/novoselov_roman"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            style="@style/icon.right"
+            android:src="@drawable/eye" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginLeft="@dimen/spacing_larger_72"
+        android:layout_marginStart="@dimen/spacing_larger_72"
+        android:background="@color/grey_light" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_small_8"
+        android:layout_marginTop="@dimen/spacing_small_8"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/icon.left"
+            android:src="@drawable/github_circle" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_big_72"
+            android:layout_marginEnd="@dimen/spacing_normal_16"
+            android:layout_marginLeft="@dimen/spacing_medium_32"
+            android:layout_marginRight="@dimen/spacing_normal_16"
+            android:layout_marginStart="@dimen/spacing_medium_32"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_github"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:fontFamily="sans-serif-condensed"
+                    android:hint="@string/layout_text_repo"
+                    android:text="https://github.com/RNOVOSELOV/DevIntensive"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            style="@style/icon.right"
+            android:src="@drawable/eye" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginLeft="@dimen/spacing_larger_72"
+        android:layout_marginStart="@dimen/spacing_larger_72"
+        android:background="@color/grey_light" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_small_8"
+        android:layout_marginTop="@dimen/spacing_small_8"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/icon.left"
+            android:src="@drawable/account_circle" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_normal_16"
+            android:layout_marginLeft="@dimen/spacing_medium_32"
+            android:layout_marginRight="@dimen/spacing_normal_16"
+            android:layout_marginStart="@dimen/spacing_medium_32"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:fontFamily="sans-serif-condensed"
+                    android:hint="@string/layout_text_about"
+                    android:text="@string/about"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
