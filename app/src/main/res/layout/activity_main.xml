@@ -14,24 +14,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/spacing_xxlarge_112"
+            android:background="@color/grey"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/padding_xxlarge_24"
             android:paddingBottom="@dimen/padding_xxlarge_24"
-            android:background="@color/grey">
+            android:paddingTop="@dimen/padding_xxlarge_24">
 
 
             <LinearLayout
                 style="@style/panel_item"
-                android:layout_weight="1"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="1">
+
                 <TextView
                     style="@style/panel_sub_item"
-                    android:textSize="@dimen/font_xxlarge_24"
-                    android:text="5"/>
+                    android:text="5"
+                    android:textSize="@dimen/font_xxlarge_24" />
+
                 <TextView
                     style="@style/panel_sub_item"
-                    android:textSize="@dimen/font_large_16"
-                    android:text="Рейтинг"/>
+                    android:text="@string/panel_raiting"
+                    android:textSize="@dimen/font_large_16" />
             </LinearLayout>
 
             <View
@@ -41,16 +43,18 @@
 
             <LinearLayout
                 style="@style/panel_item"
-                android:layout_weight="2"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="2">
+
                 <TextView
                     style="@style/panel_sub_item"
-                    android:textSize="@dimen/font_xxlarge_24"
-                    android:text="25000"/>
+                    android:text="25000"
+                    android:textSize="@dimen/font_xxlarge_24" />
+
                 <TextView
                     style="@style/panel_sub_item"
-                    android:textSize="@dimen/font_large_16"
-                    android:text="Написано строк кода"/>
+                    android:text="@string/panel_count_code_strings"
+                    android:textSize="@dimen/font_large_16" />
             </LinearLayout>
 
             <View
@@ -60,16 +64,18 @@
 
             <LinearLayout
                 style="@style/panel_item"
-                android:layout_weight="1"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="1">
+
                 <TextView
                     style="@style/panel_sub_item"
-                    android:textSize="@dimen/font_xxlarge_24"
-                    android:text="5"/>
+                    android:text="5"
+                    android:textSize="@dimen/font_xxlarge_24" />
+
                 <TextView
                     style="@style/panel_sub_item"
-                    android:textSize="@dimen/font_large_16"
-                    android:text="Проектов"/>
+                    android:text="@string/panel_projects"
+                    android:textSize="@dimen/font_large_16" />
             </LinearLayout>
         </LinearLayout>
 
@@ -102,16 +108,10 @@
 
                     <EditText
                         android:id="@+id/et_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:fontFamily="sans-serif-condensed"
+                        style="@style/item_text_input_layout"
                         android:hint="@string/layout_text_mobile_phone"
                         android:inputType="phone"
-                        android:text="+79027888883"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grey" />
+                        android:text="+79027888883" />
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -122,11 +122,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginLeft="@dimen/spacing_larger_72"
-            android:layout_marginStart="@dimen/spacing_larger_72"
-            android:background="@color/grey_light" />
+            style="@style/gorizontal_delimeter" />
 
 
         <LinearLayout
@@ -157,16 +153,10 @@
 
                     <EditText
                         android:id="@+id/et_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:fontFamily="sans-serif-condensed"
+                        style="@style/item_text_input_layout"
                         android:hint="@string/layout_text_e_mail"
                         android:inputType="textEmailAddress"
-                        android:text="my_mail@mail.my"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grey" />
+                        android:text="my_mail@mail.my" />
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -177,11 +167,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginLeft="@dimen/spacing_larger_72"
-            android:layout_marginStart="@dimen/spacing_larger_72"
-            android:background="@color/grey_light" />
+            style="@style/gorizontal_delimeter" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -211,15 +197,9 @@
 
                     <EditText
                         android:id="@+id/et_vk"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:fontFamily="sans-serif-condensed"
+                        style="@style/item_text_input_layout"
                         android:hint="@string/layout_text_vk"
-                        android:text="vk.com/novoselov_roman"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grey" />
+                        android:text="vk.com/novoselov_roman" />
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -230,11 +210,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginLeft="@dimen/spacing_larger_72"
-            android:layout_marginStart="@dimen/spacing_larger_72"
-            android:background="@color/grey_light" />
+            style="@style/gorizontal_delimeter" />
 
 
         <LinearLayout
@@ -265,15 +241,9 @@
 
                     <EditText
                         android:id="@+id/et_github"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:fontFamily="sans-serif-condensed"
+                        style="@style/item_text_input_layout"
                         android:hint="@string/layout_text_repo"
-                        android:text="https://github.com/RNOVOSELOV/DevIntensive"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grey" />
+                        android:text="https://github.com/RNOVOSELOV/DevIntensive" />
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -284,11 +254,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginLeft="@dimen/spacing_larger_72"
-            android:layout_marginStart="@dimen/spacing_larger_72"
-            android:background="@color/grey_light" />
+            style="@style/gorizontal_delimeter" />
 
 
         <LinearLayout
@@ -315,19 +281,14 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_small_8">
 
                     <EditText
                         android:id="@+id/et_about"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:fontFamily="sans-serif-condensed"
+                        style="@style/item_text_input_layout"
                         android:hint="@string/layout_text_about"
-                        android:text="@string/about"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grey" />
+                        android:text="@string/about"/>
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
