@@ -8,6 +8,10 @@
         <item name="colorAccent">@color/color_accent</item>
     </style>
 
+    <style name="custom_dialog">
+        <item name="android:fullDark">@android:color/transparent</item>
+    </style>
+
     <style name="icon">
         <item name="android:layout_height">@dimen/size_small_24</item>
         <item name="android:layout_width">@dimen/size_small_24</item>

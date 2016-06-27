@@ -1,12 +1,11 @@
 package com.softdesign.devintensive.ui.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.utils.ContentManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String TAG = ContentManager.TAG_PREFIX + MainActivity.class.getSimpleName();
 
@@ -16,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
      * UI пользовательский интерфейс;
      * инициализация статических даных;
      * связь данных со списками (инициализация адаптеров).
-     *
+     * <p/>
      * Не запускать длительные операции по работе с данными.
      *
      * @param savedInstanceState объект со значениями, сохраненными в {@link Bundle} - состояние UI
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Метод вызывается, когда текщая активити теряет фокус, но остается видимойс (всплытие диалогового
      * окна/частичное перекрытие другой активити и т.п.)
-     *
+     * <p/>
      * В данном методе реализуют сохранение легковесных UI-данных, остановку анимаций/аудио/видео.
      */
     @Override
