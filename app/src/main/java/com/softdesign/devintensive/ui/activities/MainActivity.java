@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.utils.ContentManager;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String TAG = ContentManager.TAG_PREFIX + MainActivity.class.getSimpleName();
+
     private CoordinatorLayout mCoordinatorLayout;
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -66,6 +68,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         setupToolbar();
         setupDrawer();
+        loadUserInfoValues();
 
         if (savedInstanceState == null) {
             mCurrentEditMode = false;
@@ -119,6 +122,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+        saveUserInfoValues();
     }
 
     /**
@@ -203,15 +207,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             fabIcon = R.drawable.ic_done_black_24dp;
         } else {
             fabIcon = R.drawable.ic_create_black_24dp;
+            saveUserInfoValues();
         }
         mFab.setImageResource(fabIcon);
     }
 
     private void loadUserInfoValues() {
-
+        List <String> userData = DataManager.getInstance().getPreferenceManager().loadUserProfileData();
+        for (int i = 0; i < userData.size(); i ++) {
+            mUserInfoList.get(i).setText(userData.get(i));
+        }
     }
 
     private void saveUserInfoValues() {
-
+        List<String> userData = new ArrayList<>();
+        for (EditText userFieldView : mUserInfoList) {
+            userData.add(userFieldView.getText().toString());
+        }
+        DataManager.getInstance().getPreferenceManager().saveUserProfileData(userData);
     }
 }
