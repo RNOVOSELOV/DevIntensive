@@ -1,5 +1,7 @@
 package com.softdesign.devintensive.ui.activities;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,10 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.utils.ContentManager;
+import com.softdesign.devintensive.utils.RoundedAvatarDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +61,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mEtVk = ((EditText) findViewById(R.id.et_vk));
         mEtGitHub = ((EditText) findViewById(R.id.et_github));
         mEtAbout = ((EditText) findViewById(R.id.et_about));
+
         mUserInfoList = new ArrayList<>();
         mUserInfoList.add(mEtMobile);
         mUserInfoList.add(mEtEmail);
@@ -157,7 +162,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -179,6 +184,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void setupDrawer() {
         NavigationView navigationView = ((NavigationView) findViewById(R.id.navigation_view));
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.photo);
+        RoundedAvatarDrawable roundedAvatarDrawable = new RoundedAvatarDrawable(bitmap);
+        ImageView iv = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
+        if (iv != null) {
+            iv.setImageDrawable(roundedAvatarDrawable);
+        }
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -222,8 +234,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void loadUserInfoValues() {
-        List <String> userData = DataManager.getInstance().getPreferenceManager().loadUserProfileData();
-        for (int i = 0; i < userData.size(); i ++) {
+        List<String> userData = DataManager.getInstance().getPreferenceManager().loadUserProfileData();
+        for (int i = 0; i < userData.size(); i++) {
             mUserInfoList.get(i).setText(userData.get(i));
         }
     }
