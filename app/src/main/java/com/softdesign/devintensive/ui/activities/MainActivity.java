@@ -155,6 +155,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onRestart();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     public void showSnackBar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
