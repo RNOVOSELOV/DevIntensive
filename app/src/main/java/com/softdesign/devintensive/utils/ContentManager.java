@@ -5,4 +5,5 @@ package com.softdesign.devintensive.utils;
  */
 public interface ContentManager {
     String TAG_PREFIX = "DEV_";
+    String EDIT_MODE_KEY = "EDIT_MODE_KEY";
 }

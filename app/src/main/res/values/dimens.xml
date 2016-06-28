@@ -50,5 +50,7 @@
     <dimen name="line_height">1dp</dimen>
     <dimen name="spacing_larger_72">72dp</dimen>
     <dimen name="spacing_xxlarge_112">112dp</dimen>
+    <dimen name="profile_image_size">256dp</dimen>
+    <dimen name="fab_right_space">8dp</dimen>
 
 </resources>
