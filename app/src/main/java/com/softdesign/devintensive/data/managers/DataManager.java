@@ -5,21 +5,21 @@ package com.softdesign.devintensive.data.managers;
  */
 public class DataManager {
 
-    private static DataManager INSTANCE = null;
     private PreferencesManager mPreferenceManager;
 
     private DataManager() {
         mPreferenceManager = new PreferencesManager();
     }
 
-    public static DataManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new DataManager();
-        }
-        return INSTANCE;
+    private static class DataManagerHolder {
+        private final static DataManager INSTANCE = new DataManager();
     }
 
-    public PreferencesManager getPreferenceManager () {
+    public static DataManager getInstance() {
+        return DataManagerHolder.INSTANCE;
+    }
+
+    public PreferencesManager getPreferenceManager() {
         return mPreferenceManager;
     }
 }
