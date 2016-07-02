@@ -34,7 +34,7 @@
     </style>
 
     <style name="panel_item">
-        <item name="android:layout_height">@dimen/spacing_large_56</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">@dimen/spacing_zero_0</item>
         <item name="android:orientation">vertical</item>
     </style>
