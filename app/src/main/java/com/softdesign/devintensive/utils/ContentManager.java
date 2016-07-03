@@ -6,6 +6,7 @@ package com.softdesign.devintensive.utils;
 public interface ContentManager {
     String TAG_PREFIX = "DEV_";
     String EDIT_MODE_KEY = "EDIT_MODE_KEY";
+    String STAT_PANEL_PADDING_KEY = "STAT_PANEL_PADDING_KEY";
 
     String USER_PHONE_KEY = "USER_PHONE_KEY";
     String USER_EMAIL_KEY = "USER_EMAIL_KEY";

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
@@ -75,11 +76,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setupDrawer();
         loadUserInfoValues();
 
+        LinearLayout ll = (LinearLayout) findViewById(R.id.ll_stat_panel);
         if (savedInstanceState == null) {
             mCurrentEditMode = false;
+
         } else {
             mCurrentEditMode = savedInstanceState.getBoolean(ContentManager.EDIT_MODE_KEY, false);
             setEditMode(mCurrentEditMode);
+            int llPadding = savedInstanceState.getInt(ContentManager.STAT_PANEL_PADDING_KEY, getResources().getDimensionPixelSize(R.dimen.padding_xxlarge_24));
+            if (ll != null) {
+                ll.setPadding(0, llPadding, 0, llPadding);
+            }
         }
     }
 
@@ -87,6 +94,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ContentManager.EDIT_MODE_KEY, mCurrentEditMode);
+
+        LinearLayout ll = (LinearLayout) findViewById(R.id.ll_stat_panel);
+        outState.putInt(ContentManager.STAT_PANEL_PADDING_KEY, ll.getPaddingTop());
     }
 
     @Override
