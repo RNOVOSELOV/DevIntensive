@@ -34,7 +34,7 @@
                 <ImageView
                     android:id="@+id/user_photo"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/profile_image_size"
+                    android:layout_height="@dimen/size_profile_image"
                     android:background="@drawable/collapsing_photo"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop" />
@@ -60,8 +60,8 @@
             android:layout_gravity="bottom"
             android:background="@color/grey"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/padding_xxlarge_24"
-            android:paddingTop="@dimen/padding_xxlarge_24"
+            android:paddingBottom="@dimen/padding_large_24"
+            android:paddingTop="@dimen/padding_large_24"
             app:layout_anchor="@id/appbar_layout"
             app:layout_anchorGravity="bottom"
             app:layout_behavior=".ui.view.behaviors.StatisticPanelBehavior">
@@ -75,16 +75,16 @@
                 <TextView
                     style="@style/panel_sub_item"
                     android:text="5"
-                    android:textSize="@dimen/font_xxlarge_24" />
+                    android:textSize="@dimen/font_enlarge_24" />
 
                 <TextView
                     style="@style/panel_sub_item"
                     android:text="@string/panel_raiting"
-                    android:textSize="@dimen/font_large_16" />
+                    android:textSize="@dimen/font_increased_16" />
             </LinearLayout>
 
             <View
-                android:layout_width="@dimen/line_height"
+                android:layout_width="@dimen/size_delimeter_line"
                 android:layout_height="@dimen/spacing_large_56"
                 android:background="@color/grey_light" />
 
@@ -96,16 +96,16 @@
                 <TextView
                     style="@style/panel_sub_item"
                     android:text="25000"
-                    android:textSize="@dimen/font_xxlarge_24" />
+                    android:textSize="@dimen/font_enlarge_24" />
 
                 <TextView
                     style="@style/panel_sub_item"
                     android:text="@string/panel_count_code_strings"
-                    android:textSize="@dimen/font_large_16" />
+                    android:textSize="@dimen/font_increased_16" />
             </LinearLayout>
 
             <View
-                android:layout_width="@dimen/line_height"
+                android:layout_width="@dimen/size_delimeter_line"
                 android:layout_height="@dimen/spacing_large_56"
                 android:background="@color/grey_light" />
 
@@ -117,12 +117,12 @@
                 <TextView
                     style="@style/panel_sub_item"
                     android:text="5"
-                    android:textSize="@dimen/font_xxlarge_24" />
+                    android:textSize="@dimen/font_enlarge_24" />
 
                 <TextView
                     style="@style/panel_sub_item"
                     android:text="@string/panel_projects"
-                    android:textSize="@dimen/font_large_16" />
+                    android:textSize="@dimen/font_increased_16" />
             </LinearLayout>
 
         </LinearLayout>
@@ -141,7 +141,7 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/fab_right_space"
+            android:layout_marginRight="@dimen/margin_fab_right"
             android:src="@drawable/ic_create_black_24dp"
             app:layout_anchor="@id/appbar_layout"
             app:layout_anchorGravity="bottom|right" />

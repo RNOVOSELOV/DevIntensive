@@ -83,13 +83,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             mCurrentEditMode = savedInstanceState.getBoolean(ContentManager.EDIT_MODE_KEY, false);
             setEditMode(mCurrentEditMode);
-            int llPadding = savedInstanceState.getInt(ContentManager.STAT_PANEL_PADDING_KEY, getResources().getDimensionPixelSize(R.dimen.padding_xxlarge_24));
+            int llPadding = savedInstanceState.getInt(ContentManager.STAT_PANEL_PADDING_KEY, getResources().getDimensionPixelSize(R.dimen.padding_large_24));
             if (ll != null) {
                 ll.setPadding(0, llPadding, 0, llPadding);
             }
         }
     }
 
+    /**
+     * Метод сохранения пользовательских данных при пересоздании Активити
+     *
+     * @param outState обьект типа {@link Bundle}, в который сохраняются пользовательские данные
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -179,10 +184,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Метод отображает сообщение в {@link Snackbar}
+     *
+     * @param message сообщение
+     */
     public void showSnackBar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Метод настраивает туллбар при запуске прложения
+     */
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -192,6 +205,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Метод настраивает {@link NavigationView} при запуске приложения
+     */
     private void setupDrawer() {
         NavigationView navigationView = ((NavigationView) findViewById(R.id.navigation_view));
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.photo);
@@ -243,6 +259,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mFab.setImageResource(fabIcon);
     }
 
+    /**
+     * Метод чтения информации о пользователе из {@link android.content.SharedPreferences}
+     */
     private void loadUserInfoValues() {
         List<String> userData = DataManager.getInstance().getPreferenceManager().loadUserProfileData();
         for (int i = 0; i < userData.size(); i++) {
@@ -250,6 +269,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Метод записи информации о пользователе в {@link android.content.SharedPreferences}
+     */
     private void saveUserInfoValues() {
         List<String> userData = new ArrayList<>();
         for (EditText userFieldView : mUserInfoList) {

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by roman on 28.06.16.
+ * Класс для работы с {@link SharedPreferences}
  */
 public class PreferencesManager {
 
