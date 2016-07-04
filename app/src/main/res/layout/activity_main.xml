@@ -135,6 +135,7 @@
             app:layout_behavior=".ui.view.behaviors.NestedScrollBehavior">
 
             <include layout="@layout/user_profile_layout" />
+
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.design.widget.FloatingActionButton
