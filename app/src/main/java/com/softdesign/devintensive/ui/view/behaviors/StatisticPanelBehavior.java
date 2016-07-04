@@ -55,7 +55,7 @@ public class StatisticPanelBehavior extends CoordinatorLayout.Behavior<LinearLay
     public boolean onDependentViewChanged(CoordinatorLayout parent, LinearLayout child, View dependency) {
         final CoordinatorLayout.LayoutParams lp = ((CoordinatorLayout.LayoutParams) child.getLayoutParams());
         if (lp.getAnchorId() != dependency.getId()) {
-            return false;
+            return super.onDependentViewChanged(parent, child, dependency);
         }
         // Шаг высоты аппара, при прохождении которого необходимо на еденицу изменить паддинг
         float panelStep = dependency.getHeight() / maxPanelPadding;
