@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,17 +24,27 @@ import com.softdesign.devintensive.utils.RoundedAvatarDrawable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class MainActivity extends BaseActivity {
 
     public static final String TAG = ContentManager.TAG_PREFIX + MainActivity.class.getSimpleName();
-
-    private CoordinatorLayout mCoordinatorLayout;
-    private Toolbar mToolbar;
-    private DrawerLayout mDrawerLayout;
     private boolean mCurrentEditMode = false;
-    private FloatingActionButton mFab;
-    private EditText mEtMobile, mEtEmail, mEtVk, mEtGitHub, mEtAbout;
-    private List<EditText> mUserInfoList;
+
+    @BindView(R.id.navigation_drawer)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.main_coordinator_container)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+
+    @BindViews({R.id.et_phone, R.id.et_email, R.id.et_vk, R.id.et_github, R.id.et_about})
+    List<EditText> mUserInfoList;
 
     /**
      * Метод вызывается при старте активити
@@ -53,24 +62,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCoordinatorLayout = ((CoordinatorLayout) findViewById(R.id.main_coordinator_container));
-        mToolbar = ((Toolbar) findViewById(R.id.toolbar));
-        mDrawerLayout = ((DrawerLayout) findViewById(R.id.navigation_drawer));
-        mFab = ((FloatingActionButton) findViewById(R.id.fab));
-        mEtMobile = ((EditText) findViewById(R.id.et_phone));
-        mEtEmail = ((EditText) findViewById(R.id.et_email));
-        mEtVk = ((EditText) findViewById(R.id.et_vk));
-        mEtGitHub = ((EditText) findViewById(R.id.et_github));
-        mEtAbout = ((EditText) findViewById(R.id.et_about));
-
-        mUserInfoList = new ArrayList<>();
-        mUserInfoList.add(mEtMobile);
-        mUserInfoList.add(mEtEmail);
-        mUserInfoList.add(mEtVk);
-        mUserInfoList.add(mEtGitHub);
-        mUserInfoList.add(mEtAbout);
-
-        mFab.setOnClickListener(this);
+        ButterKnife.bind(this);
 
         setupToolbar();
         setupDrawer();
@@ -228,14 +220,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fab:
-                mCurrentEditMode = !mCurrentEditMode;
-                setEditMode(mCurrentEditMode);
-                break;
-        }
+    @OnClick(R.id.fab)
+    public void onFabClick(FloatingActionButton button) {
+        mCurrentEditMode = !mCurrentEditMode;
+        setEditMode(mCurrentEditMode);
     }
 
     /**
