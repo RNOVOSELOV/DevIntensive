@@ -1,5 +1,6 @@
 package com.softdesign.devintensive.ui.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -177,6 +178,17 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
+     * Метод обрабоки запрашиваемых данных от других {@link android.app.Activity}
+     * @param requestCode код запроса, на основании которого понимаем от какой активности пришел ответ
+     * @param resultCode результат запроса
+     * @param data данные, упакованые в {@link Intent}, которые возвращены запрашиваемой активностью
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
      * Метод отображает сообщение в {@link Snackbar}
      *
      * @param message сообщение
@@ -220,12 +232,6 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    @OnClick(R.id.fab)
-    public void onFabClick(FloatingActionButton button) {
-        mCurrentEditMode = !mCurrentEditMode;
-        setEditMode(mCurrentEditMode);
-    }
-
     /**
      * Метод пеерключает режим редактирования информации о пользователе
      *
@@ -266,5 +272,22 @@ public class MainActivity extends BaseActivity {
             userData.add(userFieldView.getText().toString());
         }
         DataManager.getInstance().getPreferenceManager().saveUserProfileData(userData);
+    }
+
+    private void loadPhotoFromGallery () {
+
+    }
+
+    private void loadPhotoFromCamera () {
+
+    }
+
+    /**
+     * Метод обработки клика FloatingActionButton
+     */
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        mCurrentEditMode = !mCurrentEditMode;
+        setEditMode(mCurrentEditMode);
     }
 }
