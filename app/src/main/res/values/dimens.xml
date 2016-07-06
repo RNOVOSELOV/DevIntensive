@@ -43,6 +43,7 @@
     <!-- -->
     <dimen name="size_small_24">24dp</dimen>
     <dimen name="size_big_72">72dp</dimen>
+    <dimen name="size_great_88">88dp</dimen>
     <dimen name="size_delimeter_line">1dp</dimen>
     <dimen name="size_profile_image">256dp</dimen>
     <dimen name="margin_fab_right">8dp</dimen>

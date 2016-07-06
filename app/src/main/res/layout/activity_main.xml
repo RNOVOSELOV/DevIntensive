@@ -29,15 +29,47 @@
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
                 app:contentScrim="@color/color_primary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-                <ImageView
-                    android:id="@+id/user_photo"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_profile_image"
-                    android:background="@drawable/collapsing_photo"
-                    android:fitsSystemWindows="true"
-                    android:scaleType="centerCrop" />
+                    android:fitsSystemWindows="true">
+
+                    <ImageView
+                        android:id="@+id/user_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_profile_image"
+                        android:background="@drawable/collapsing_photo"
+                        android:scaleType="centerCrop" />
+
+                    <RelativeLayout
+                        android:id="@+id/profile_placrholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/background_placeholder"
+                        android:visibility="gone">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_photo_placeholder"
+                            android:textColor="@color/white"
+                            android:fontFamily="sans-serif-medium"
+                            android:layout_centerHorizontal="true"
+                            android:layout_above="@+id/image_camera"
+                            android:layout_marginBottom="@dimen/margin_little_8"/>
+                        <ImageView
+                            android:id="@+id/image_camera"
+                            android:layout_width="@dimen/size_great_88"
+                            android:layout_height="@dimen/size_great_88"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_add_a_photo_black_48px"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginBottom="@dimen/margin_enlarge_56"
+                            android:layout_alignParentBottom="true"
+                            />
+                    </RelativeLayout>
+                </FrameLayout>
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"

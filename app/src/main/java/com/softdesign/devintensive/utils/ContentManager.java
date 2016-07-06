@@ -13,4 +13,7 @@ public interface ContentManager {
     String USER_VK_KEY = "USER_VK_KEY";
     String USER_GITHUB_KEY = "USER_GITHUB_KEY";
     String USER_ABOUT_KEY = "USER_ABOUT_KEY";
+
+    int REQUEST_CAMERA_PICTURE = 100;
+    int REQUEST_GALLERY_PHOTO = 101;
 }
