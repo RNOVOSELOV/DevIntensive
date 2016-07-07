@@ -4,10 +4,12 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +29,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
@@ -81,6 +84,11 @@ public class MainActivity extends BaseActivity {
 
     @BindViews({R.id.et_phone, R.id.et_email, R.id.et_vk, R.id.et_github, R.id.et_about})
     List<EditText> mUserInfoList;
+
+    private final int PROFILE_ET_PHONE_POSITION = 0;
+    private final int PROFILE_ET_EMAIL_POSITION = 1;
+    private final int PROFILE_ET_VK_POSITION = 2;
+    private final int PROFILE_ET_GITHUB_POSITION = 3;
 
     /**
      * Метод вызывается при старте активити
@@ -421,7 +429,7 @@ public class MainActivity extends BaseActivity {
                 loadPhotoFromCamera();
             }
         } else if (requestCode == ContentManager.GALLERY_REQUEST_PERMISSION_CODE && grantResults.length == 1) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 loadPhotoFromGallery();
             }
         }
@@ -499,6 +507,11 @@ public class MainActivity extends BaseActivity {
         dialog.show();
     }
 
+    public void openApplicationSettings() {
+        Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+        startActivityForResult(appSettingsIntent, ContentManager.REQUEST_PERMISSION_CODE);
+    }
+
     /**
      * Метод обработки клика FloatingActionButton
      */
@@ -513,9 +526,59 @@ public class MainActivity extends BaseActivity {
         showImageProviderChooseDialog();
     }
 
-    public void openApplicationSettings() {
-        Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
-        startActivityForResult(appSettingsIntent, ContentManager.REQUEST_PERMISSION_CODE);
+    @OnClick(R.id.profile_call)
+    public void onCallClick() {
+        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+        callIntent.setData(Uri.parse("tel:" + mUserInfoList.get(PROFILE_ET_PHONE_POSITION).getText().toString()));
+        if (deviceHaveIntentActivity(callIntent)) {
+            startActivity(callIntent);
+        } else {
+            Snackbar.make(mCoordinatorLayout, R.string.string_warning_does_not_match_activity, Snackbar.LENGTH_LONG).show();
+        }
     }
 
+    @OnClick(R.id.profile_send_email)
+    public void onSendEmailClick() {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{mUserInfoList.get(PROFILE_ET_EMAIL_POSITION).getText().toString()});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello world");
+        emailIntent.setType("application/octet-stream");
+        if (deviceHaveIntentActivity(emailIntent)) {
+            startActivity(Intent.createChooser(emailIntent, "Send Email"));
+        } else {
+            Snackbar.make(mCoordinatorLayout, R.string.string_warning_does_not_match_activity, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @OnClick(R.id.profile_open_vk)
+    public void onVkOpen() {
+        final String VK_APP_PACKAGE_ID = "com.vkontakte.android";
+        final String url = "https://" + mUserInfoList.get(PROFILE_ET_VK_POSITION).getText().toString();
+        Intent vkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        List<ResolveInfo> resInfo = getPackageManager().queryIntentActivities(vkIntent, 0);
+
+        if (resInfo.isEmpty()) {
+            Snackbar.make(mCoordinatorLayout, R.string.string_warning_does_not_match_activity, Snackbar.LENGTH_LONG).show();
+        } else {
+            for (ResolveInfo info : resInfo) {
+                if (VK_APP_PACKAGE_ID.equals(info.activityInfo.packageName)) {
+                    vkIntent.setPackage(info.activityInfo.packageName);
+                    break;
+                }
+            }
+            startActivity(vkIntent);
+        }
+    }
+
+    @OnClick(R.id.profile_open_github)
+    public void onGitHubOpen() {
+        final String url = "https://" + mUserInfoList.get(PROFILE_ET_GITHUB_POSITION).getText().toString();
+        Intent githubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        if (deviceHaveIntentActivity(githubIntent)) {
+            startActivity(githubIntent);
+        } else {
+            Snackbar.make(mCoordinatorLayout, R.string.string_warning_does_not_match_activity, Snackbar.LENGTH_LONG).show();
+        }
+    }
 }

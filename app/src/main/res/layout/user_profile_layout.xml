@@ -40,6 +40,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/profile_call"
             style="@style/icon.right"
             android:src="@drawable/ic_phone_in_talk_black_24dp" />
     </LinearLayout>
@@ -83,6 +84,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/profile_send_email"
             style="@style/icon.right"
             android:src="@drawable/ic_send_black_24dp" />
     </LinearLayout>
@@ -124,6 +126,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/profile_open_vk"
             style="@style/icon.right"
             android:src="@drawable/eye" />
     </LinearLayout>
@@ -166,6 +169,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/profile_open_github"
             style="@style/icon.right"
             android:src="@drawable/eye" />
     </LinearLayout>
