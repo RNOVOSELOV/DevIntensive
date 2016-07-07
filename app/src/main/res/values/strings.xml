@@ -20,4 +20,7 @@
     <string name="user_profile_camera_dialog">Сделать фото</string>
     <string name="user_profile_cancel_dialog">Отмена</string>
     <string name="user_profile_gallery_picker">Выберите фото</string>
+    <string name="error_create_tempfile">Ошибка открытия камеры</string>
+    <string name="satring_need_permissions">Необзодимо дать разрешения</string>
+    <string name="string_allow">Разрешить</string>
 </resources>
