@@ -16,6 +16,7 @@
     <dimen name="spacing_small_8">8dp</dimen>
     <dimen name="spacing_little_16">16dp</dimen>
     <dimen name="spacing_normal_24">24dp</dimen>
+    <dimen name="spacing_increase_28">28dp</dimen>
     <dimen name="spacing_bigger_32">32dp</dimen>
     <dimen name="spacing_medium_40">40dp</dimen>
     <dimen name="spacing_large_48">48dp</dimen>
@@ -43,6 +44,7 @@
     <!-- -->
     <dimen name="size_small_24">24dp</dimen>
     <dimen name="size_big_72">72dp</dimen>
+    <dimen name="size_bigger_88">80dp</dimen>
     <dimen name="size_great_88">88dp</dimen>
     <dimen name="size_delimeter_line">1dp</dimen>
     <dimen name="size_profile_image">256dp</dimen>

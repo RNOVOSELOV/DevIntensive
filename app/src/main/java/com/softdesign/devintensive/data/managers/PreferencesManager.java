@@ -47,6 +47,6 @@ public class PreferencesManager {
     }
 
     public Uri loadUserPhoto () {
-        return Uri.parse(mSharedPreferences.getString(ContentManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/collapsing_photo"));
+        return Uri.parse(mSharedPreferences.getString(ContentManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/user_bg"));
     }
 }

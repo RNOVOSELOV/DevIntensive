@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,6 +21,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -29,10 +29,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,6 +43,7 @@ import android.widget.RelativeLayout;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.utils.ContentManager;
+import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
 import com.softdesign.devintensive.utils.RoundedAvatarDrawable;
 import com.squareup.picasso.Picasso;
 
@@ -51,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.BindViews;
@@ -123,6 +127,8 @@ public class MainActivity extends BaseActivity {
                 .resize(width, getResources().getDimensionPixelOffset(R.dimen.size_profile_image))
                 .centerCrop()
                 .into(mProfileImage);
+
+        setValidators();
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.ll_stat_panel);
         if (savedInstanceState == null) {
@@ -512,6 +518,38 @@ public class MainActivity extends BaseActivity {
         startActivityForResult(appSettingsIntent, ContentManager.REQUEST_PERMISSION_CODE);
     }
 
+    private void setOnFocusChangeListener() {
+        View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
+                    lp.height = getResources().getDimensionPixelSize(R.dimen.size_bigger_88);
+                    view.setLayoutParams(lp);
+                    Log.d("TAG", "222");
+                    //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        };
+        mUserInfoList.get(PROFILE_ET_PHONE_POSITION).setOnFocusChangeListener(focusListener);
+        //((TextInputLayout) findViewById(R.id.til_email)).setOnFocusChangeListener(focusListener);
+    }
+
+    private void setValidators () {
+        final String PHONE_REGEXP = "^\\d{11,20}$";
+        final String EMAIL_REGEXP = "^[A-Za-z0-9+_.-]{3,}+@([A-Za-z0-9+_.-]{2,})+\\.+[a-zA-Z]{2,}$";
+        final String VK_REGEXP = "^vk\\.com\\/[\\w]{3,}+$";
+        final String GITHUB_REGEXP = "^github\\.com\\/[\\w]{3,}+$";
+        TextInputLayout phoneTw = (TextInputLayout) findViewById(R.id.til_phone);
+        TextInputLayout emailTw = (TextInputLayout) findViewById(R.id.til_email);
+        TextInputLayout vkTw = (TextInputLayout) findViewById(R.id.til_vk);
+        TextInputLayout githubTw = (TextInputLayout) findViewById(R.id.til_github);
+        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(GITHUB_REGEXP),githubTw));
+        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(PHONE_REGEXP),phoneTw));
+        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(EMAIL_REGEXP),emailTw));
+        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(VK_REGEXP),vkTw));
+    }
+
     /**
      * Метод обработки клика FloatingActionButton
      */
@@ -519,6 +557,10 @@ public class MainActivity extends BaseActivity {
     public void onFabClick() {
         mCurrentEditMode = !mCurrentEditMode;
         setEditMode(mCurrentEditMode);
+        if (mCurrentEditMode) {
+            mUserInfoList.get(PROFILE_ET_PHONE_POSITION).requestFocus();
+            mUserInfoList.get(PROFILE_ET_PHONE_POSITION).setSelection(mUserInfoList.get(PROFILE_ET_PHONE_POSITION).getText().length());
+        }
     }
 
     @OnClick(R.id.profile_placrholder)

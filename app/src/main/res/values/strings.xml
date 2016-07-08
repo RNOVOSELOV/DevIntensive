@@ -24,4 +24,6 @@
     <string name="satring_need_permissions">Необзодимо дать разрешения</string>
     <string name="string_allow">Разрешить</string>
     <string name="string_warning_does_not_match_activity">Не найдено приложений для выполнения данного действия</string>
+    <string name="error_no_data">Необходимо заполнить поле</string>
+    <string name="error_uncorrect_data">Введены некорректные данные</string>
 </resources>
