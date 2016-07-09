@@ -53,7 +53,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
@@ -86,6 +85,15 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.user_photo)
     ImageView mProfileImage;
 
+    @BindView(R.id.til_phone)
+    TextInputLayout mTilPhone;
+    @BindView(R.id.til_email)
+    TextInputLayout mTilEmail;
+    @BindView(R.id.til_vk)
+    TextInputLayout mTilVk;
+    @BindView(R.id.til_github)
+    TextInputLayout mTilGitHub;
+
     @BindViews({R.id.et_phone, R.id.et_email, R.id.et_vk, R.id.et_github, R.id.et_about})
     List<EditText> mUserInfoList;
 
@@ -108,7 +116,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_no_behaviour);
+        setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
 
@@ -540,14 +548,11 @@ public class MainActivity extends BaseActivity {
         final String EMAIL_REGEXP = "^[A-Za-z0-9+_.-]{3,}+@([A-Za-z0-9+_.-]{2,})+\\.+[a-zA-Z]{2,}$";
         final String VK_REGEXP = "^vk\\.com\\/[\\w]{3,}+$";
         final String GITHUB_REGEXP = "^github\\.com\\/[\\w]{3,}+$";
-        TextInputLayout phoneTw = (TextInputLayout) findViewById(R.id.til_phone);
-        TextInputLayout emailTw = (TextInputLayout) findViewById(R.id.til_email);
-        TextInputLayout vkTw = (TextInputLayout) findViewById(R.id.til_vk);
-        TextInputLayout githubTw = (TextInputLayout) findViewById(R.id.til_github);
-        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(GITHUB_REGEXP),githubTw));
-        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(PHONE_REGEXP),phoneTw));
-        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(EMAIL_REGEXP),emailTw));
-        emailTw.getEditText().addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(VK_REGEXP),vkTw));
+
+        mUserInfoList.get(PROFILE_ET_PHONE_POSITION).addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(PHONE_REGEXP),mTilPhone));
+        mUserInfoList.get(PROFILE_ET_EMAIL_POSITION).addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(EMAIL_REGEXP),mTilEmail));
+        mUserInfoList.get(PROFILE_ET_VK_POSITION).addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(VK_REGEXP),mTilVk));
+        mUserInfoList.get(PROFILE_ET_GITHUB_POSITION).addTextChangedListener(new ProfileDataTextWatcher(Pattern.compile(GITHUB_REGEXP),mTilGitHub));
     }
 
     /**

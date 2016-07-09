@@ -1,6 +1,7 @@
 package com.softdesign.devintensive.ui.view.behaviors;
 
 import android.content.Context;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
@@ -11,7 +12,7 @@ import android.widget.LinearLayout;
 /**
  * Created by roman on 02.07.16.
  */
-public class NestedScrollBehavior extends CoordinatorLayout.Behavior<NestedScrollView> {
+public class NestedScrollBehavior extends AppBarLayout.ScrollingViewBehavior {
 
     /**
      * Конструктор бихейвера, чтобы можно было его использовать из xml разметки
@@ -27,7 +28,7 @@ public class NestedScrollBehavior extends CoordinatorLayout.Behavior<NestedScrol
      * Метод указывает зависимость вью от родительской
      */
     @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, NestedScrollView child, View dependency) {
+    public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
         return dependency instanceof LinearLayout;
     }
 
@@ -41,7 +42,19 @@ public class NestedScrollBehavior extends CoordinatorLayout.Behavior<NestedScrol
      * @return
      */
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, NestedScrollView child, View dependency) {
+    public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
+        final CoordinatorLayout.LayoutParams lp =
+                (CoordinatorLayout.LayoutParams) child.getLayoutParams();
+        LinearLayout linearLayout;
+        if (dependency instanceof LinearLayout) {
+            linearLayout = (LinearLayout) dependency;
+            if (lp.getAnchorId() != -1 && lp.getAnchorId() != linearLayout.getId()) {
+                // The anchor ID doesn't match the dependency
+                return false;
+            }
+        } else {
+            return false;
+        }
         child.setY(dependency.getBottom());
         return super.onDependentViewChanged(parent, child, dependency);
     }

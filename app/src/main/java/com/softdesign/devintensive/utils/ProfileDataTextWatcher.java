@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
  */
 public class ProfileDataTextWatcher implements TextWatcher {
 
-    private Pattern mPattern;
-    private TextInputLayout mTil;
+    final private Pattern mPattern;
+    final private TextInputLayout mTil;
 
     public ProfileDataTextWatcher(Pattern p, TextInputLayout textInputLayout) {
         mPattern = p;
