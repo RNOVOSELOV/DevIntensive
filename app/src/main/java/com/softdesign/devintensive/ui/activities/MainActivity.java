@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity {
 
         setupToolbar();
         setupDrawer();
-//        loadUserInfoValues();
+        loadUserInfoValues();
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
