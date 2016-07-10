@@ -211,7 +211,8 @@
                 <EditText
                     android:id="@+id/et_about"
                     style="@style/item_text_input_layout"
-                    android:hint="@string/layout_text_about" />
+                    android:hint="@string/layout_text_about"
+                    android:text="@string/default_about"/>
             </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>

@@ -41,7 +41,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/size_profile_image"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/collapsing_photo" />
+                        android:src="@drawable/collapsing_photo"
+                        android:visibility="visible" />
 
                     <RelativeLayout
                         android:id="@+id/profile_placrholder"
@@ -90,15 +91,11 @@
             android:id="@+id/ll_stat_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:background="@color/grey"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/padding_large_24"
-            android:paddingTop="@dimen/padding_large_24"
-            app:layout_anchor="@id/appbar_layout"
-            app:layout_anchorGravity="bottom"
-            app:layout_behavior=".ui.view.behaviors.StatisticPanelBehavior">
-
+            app:layout_behavior=".ui.view.behaviors.StatisticPanelBehavior"
+            app:behaviour_max_padding="@dimen/padding_large_24">
 
             <LinearLayout
                 style="@style/panel_item"
@@ -163,8 +160,7 @@
         <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/nested_scroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_anchor="@id/ll_stat_panel"
+            android:layout_height="wrap_content"
             app:layout_behavior=".ui.view.behaviors.NestedScrollBehavior">
 
             <include layout="@layout/user_profile_layout" />
