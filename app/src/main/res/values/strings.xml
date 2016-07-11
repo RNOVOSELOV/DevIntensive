@@ -5,16 +5,30 @@
     <string name="layout_text_vk">Профиль VK</string>
     <string name="layout_text_repo">Репозиторий</string>
     <string name="layout_text_about">О себе</string>
-    <string name="about">...Массивный, толстый молодой человек с стриженою головой, в очках…
-        Пьер был несколько больше других мужчин в комнате… Умный и вместе робкий, наблюдательный
-        и естественный взгляд, отличавший его от всех в этой гостиной… Улыбка у него была не такая,
-        какая у других людей, сливающаяся с неулыбкой. У него, напротив, когда приходила улыбка, то вдруг,
-        мгновенно исчезало серьёзное и даже несколько угрюмое лицо и являлось другое — детское, доброе,
-        даже глуповатое и как бы просящее прощения... Толстый, выше обыкновенного роста, широкий,
-        с огромными красными руками, он, как говорится, не умел войти в салон и ещё менее умел
-        из него выйти... Кроме того, он был рассеян... Но вся его рассеянность и неуменье войти в
-        салон и говорить в нём выкупались выражением добродушия, простоты и скромности.</string>
+    <string name="default_about">...Массивный, толстый молодой человек с стриженою головой, в очках… Пьер был
+        несколько больше других мужчин в комнате… Умный и вместе робкий, наблюдательный и естественный взгляд,
+        отличавший его от всех в этой гостиной… Улыбка у него была не такая, какая у других людей, сливающаяся
+        с неулыбкой. У него, напротив, когда приходила улыбка, то вдруг, мгновенно исчезало серьёзное и даже
+        несколько угрюмое лицо и являлось другое — детское, доброе, даже глуповатое и как бы просящее прощения...
+        Толстый, выше обыкновенного роста, широкий, с огромными красными руками, он, как говорится, не умел войти
+        в салон и ещё менее умел из него выйти... Кроме того, он был рассеян... Но вся его рассеянность и неуменье
+        войти в салон и говорить в нём выкупались выражением добродушия, простоты и скромности.</string>
     <string name="panel_raiting">Рейтинг</string>
     <string name="panel_count_code_strings">Написано строк кода</string>
     <string name="panel_projects">Проектов</string>
+    <string name="default_github">https://github.com/RNOVOSELOV/DevIntensive</string>
+    <string name="default_vk">vk.com/novoselov_roman</string>
+    <string name="default_email">my_mail@mail.my</string>
+    <string name="default_phone">+79027888883</string>
+    <string name="add_photo_placeholder">Изменить фотографию профиля</string>
+    <string name="user_profile_gallery_dialog">Выбрать из галереи</string>
+    <string name="user_profile_camera_dialog">Сделать фото</string>
+    <string name="user_profile_cancel_dialog">Отмена</string>
+    <string name="user_profile_gallery_picker">Выберите фото</string>
+    <string name="error_create_tempfile">Ошибка открытия камеры</string>
+    <string name="satring_need_permissions">Необзодимо дать разрешения</string>
+    <string name="string_allow">Разрешить</string>
+    <string name="string_warning_does_not_match_activity">Не найдено приложений для выполнения данного действия</string>
+    <string name="error_no_data">Необходимо заполнить поле</string>
+    <string name="error_uncorrect_data">Введены некорректные данные</string>
 </resources>
