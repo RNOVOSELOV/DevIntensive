@@ -20,4 +20,7 @@ public interface ContentManager {
     int REQUEST_PERMISSION_CODE = 102;
     int CAMERA_REQUEST_PERMISSION_CODE = 103;
     int GALLERY_REQUEST_PERMISSION_CODE = 104;
+
+    String AUTH_TOKEN = "AUTH_TOKEN";
+    String USER_ID_KEY = "USER_ID";
 }

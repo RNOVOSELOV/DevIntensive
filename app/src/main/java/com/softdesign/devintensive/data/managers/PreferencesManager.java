@@ -40,13 +40,33 @@ public class PreferencesManager {
         return userFields;
     }
 
-    public void saveUserPhoto (Uri uri) {
+    public void saveUserPhoto(Uri uri) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ContentManager.USER_PHOTO_KEY, uri.toString());
         editor.apply();
     }
 
-    public Uri loadUserPhoto () {
+    public Uri loadUserPhoto() {
         return Uri.parse(mSharedPreferences.getString(ContentManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/user_bg"));
+    }
+
+    public void saveAuthToken(String authToken) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ContentManager.AUTH_TOKEN, authToken);
+        editor.apply();
+    }
+
+    public String getAuthToken() {
+        return mSharedPreferences.getString(ContentManager.AUTH_TOKEN, "null");
+    }
+
+    public void saveUserId(String userId) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ContentManager.USER_ID_KEY, userId);
+        editor.apply();
+    }
+
+    public String getUserId() {
+        return mSharedPreferences.getString(ContentManager.USER_ID_KEY, "null");
     }
 }
