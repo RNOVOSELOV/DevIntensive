@@ -103,6 +103,7 @@
                 android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/main_tv_raiting"
                     style="@style/panel_sub_item"
                     android:text="5"
                     android:textSize="@dimen/font_enlarge_24" />
@@ -124,6 +125,7 @@
                 android:layout_weight="2">
 
                 <TextView
+                    android:id="@+id/main_tv_code_lines"
                     style="@style/panel_sub_item"
                     android:text="25000"
                     android:textSize="@dimen/font_enlarge_24" />
@@ -145,6 +147,7 @@
                 android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/main_tv_projects"
                     style="@style/panel_sub_item"
                     android:text="5"
                     android:textSize="@dimen/font_enlarge_24" />

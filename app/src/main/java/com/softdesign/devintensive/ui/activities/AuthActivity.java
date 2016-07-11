@@ -9,10 +9,17 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.network.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.utils.NetworkStatusChecker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AuthActivity extends BaseActivity {
 
@@ -38,7 +45,7 @@ public class AuthActivity extends BaseActivity {
 
     @OnClick(R.id.auth_login_button)
     public void onSignInClicked() {
-        loginSuccess();
+        signIn();
     }
 
     private void showSnackBar(String message) {
@@ -50,7 +57,48 @@ public class AuthActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    private void loginSuccess() {
-        showSnackBar("Вошли");
+    private void loginSuccess(UserModelRes response) {
+        showSnackBar(response.getData().getToken());
+        DataManager.getInstance().getPreferenceManager().saveAuthToken(response.getData().getToken());
+        DataManager.getInstance().getPreferenceManager().saveUserId(response.getData().getUser().getId());
+
+        saveUserValues(response);
+        Intent loginIntent = new Intent(this, MainActivity.class);
+        startActivity(loginIntent);
+    }
+
+    private void signIn() {
+        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+
+            Call<UserModelRes> call = DataManager.getInstance().loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
+            call.enqueue(new Callback<UserModelRes>() {
+                @Override
+                public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                    if (response.code() == 200) {
+                        loginSuccess(response.body());
+                    } else if (response.code() == 404) {
+                        showSnackBar("Неверный логин или пароль");
+                    } else {
+                        showSnackBar("Беда");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserModelRes> call, Throwable t) {
+                    showSnackBar("Ошибка входа, попробуйте позже");
+                }
+            });
+        } else {
+            showSnackBar("Сеть недоступна, попробуйте позже");
+        }
+    }
+
+    private void saveUserValues(UserModelRes userModelRes) {
+        int[] userValues = {
+                userModelRes.getData().getUser().getProfileValues().getRaiting(),
+                userModelRes.getData().getUser().getProfileValues().getLinesCode(),
+                userModelRes.getData().getUser().getProfileValues().getProjects()
+        };
+        DataManager.getInstance().getPreferenceManager().saveUserProfileValues(userValues);
     }
 }

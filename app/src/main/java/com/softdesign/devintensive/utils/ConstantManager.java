@@ -3,7 +3,7 @@ package com.softdesign.devintensive.utils;
 /**
  * Created by Роман on 23.06.2016.
  */
-public interface ContentManager {
+public interface ConstantManager {
     String TAG_PREFIX = "DEV_";
     String EDIT_MODE_KEY = "EDIT_MODE_KEY";
     String STAT_PANEL_PADDING_KEY = "STAT_PANEL_PADDING_KEY";
@@ -23,4 +23,8 @@ public interface ContentManager {
 
     String AUTH_TOKEN = "AUTH_TOKEN";
     String USER_ID_KEY = "USER_ID";
+
+    String USER_RAITING_VALUE = "USER_RAITING_VALUE";
+    String USER_CODE_LINES_COUNT = "USER_CODE_LINES_COUNT";
+    String USER_PROJECT_VALUES = "USER_PROJECT_VALUES";
 }
