@@ -40,9 +40,15 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
+import com.softdesign.devintensive.data.network.res.UploadProfilePhotoRes;
+import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.utils.AppUtils;
 import com.softdesign.devintensive.utils.ConstantManager;
+import com.softdesign.devintensive.utils.NetworkStatusChecker;
 import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
 import com.softdesign.devintensive.utils.RoundedTransformation;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -57,6 +63,10 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends BaseActivity {
 
@@ -279,6 +289,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void insertProfileImage(Uri selectedImage) {
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -289,9 +300,33 @@ public class MainActivity extends BaseActivity {
                 .placeholder(R.drawable.collapsing_photo)
                 .resize(width, getResources().getDimensionPixelOffset(R.dimen.size_profile_image))
                 .centerCrop()
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .into(mProfileImage);
 
-        DataManager.getInstance().getPreferenceManager().saveUserPhoto(selectedImage);
+        preferencesManager.saveUserPhoto(selectedImage);
+        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            File file = new File(AppUtils.getPathByUri(selectedImage));
+            Call<UploadProfilePhotoRes> call = DataManager.getInstance().uploadPhoto(preferencesManager.getUserId(), file);
+            call.enqueue(new Callback<UploadProfilePhotoRes>() {
+                @Override
+                public void onResponse(Call<UploadProfilePhotoRes> call, Response<UploadProfilePhotoRes> response) {
+                    if (response.code() == 200) {
+                        showSnackBar("Фото успешно загружено");
+                    } else if (response.code() == 401) {
+                        showSnackBar("Неверный токен");
+                    } else {
+                        showSnackBar("Видимо что-то случилось");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UploadProfilePhotoRes> call, Throwable t) {
+                    showSnackBar("Ошибка загрузки, попробуйте позже");
+                }
+            });
+        } else {
+            showSnackBar("Сеть недоступна");
+        }
     }
 
     /**

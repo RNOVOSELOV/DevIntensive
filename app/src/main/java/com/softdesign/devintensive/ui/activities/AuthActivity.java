@@ -98,7 +98,7 @@ public class AuthActivity extends BaseActivity {
                     } else if (response.code() == 404) {
                         showSnackBar("Неверный логин или пароль");
                     } else {
-                        showSnackBar("Беда");
+                        showSnackBar("Видимо что-то случилось");
                     }
                 }
 
@@ -134,8 +134,6 @@ public class AuthActivity extends BaseActivity {
 
         preferencesManager.saveUserPhoto(Uri.parse(userModelRes.getData().getUser().getPublicInfo().getPhoto()));
         preferencesManager.saveUserAvatar(Uri.parse(userModelRes.getData().getUser().getPublicInfo().getAvatar()));
-
-        Log.d("TAG", userModelRes.getData().getUser().getPublicInfo().getUpdated());
     }
 
     /**
