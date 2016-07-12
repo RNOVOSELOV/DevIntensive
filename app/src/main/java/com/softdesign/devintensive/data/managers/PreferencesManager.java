@@ -50,16 +50,6 @@ public class PreferencesManager {
         return userFields;
     }
 
-    public void saveUserPhoto(Uri uri) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(ConstantManager.USER_PHOTO_KEY, uri.toString());
-        editor.apply();
-    }
-
-    public Uri loadUserPhoto() {
-        return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/user_bg"));
-    }
-
     public void saveAuthToken(String authToken) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(ConstantManager.AUTH_TOKEN, authToken);
@@ -94,5 +84,45 @@ public class PreferencesManager {
         userFields.add(mSharedPreferences.getString(ConstantManager.USER_CODE_LINES_COUNT, "0"));
         userFields.add(mSharedPreferences.getString(ConstantManager.USER_PROJECT_VALUES, "0"));
         return userFields;
+    }
+
+    public void saveUserName (String name) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ConstantManager.USER_FULL_NAME, name);
+        editor.apply();
+    }
+
+    public String getUserName() {
+        return mSharedPreferences.getString(ConstantManager.USER_FULL_NAME, "null");
+    }
+
+    public void saveUserPhoto(Uri uri) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ConstantManager.USER_PHOTO_KEY, uri.toString());
+        editor.apply();
+    }
+
+    public Uri loadUserPhoto() {
+        return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_PHOTO_KEY, "android.resource://com.softdesign.devintensive/drawable/user_bg"));
+    }
+
+    public void saveUserAvatar(Uri uri) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ConstantManager.USER_AVATAR_KEY, uri.toString());
+        editor.apply();
+    }
+
+    public Uri getUserAvatar() {
+        return Uri.parse(mSharedPreferences.getString(ConstantManager.USER_AVATAR_KEY, "android.resource://com.softdesign.devintensive/drawable/photo"));
+    }
+
+    public void savePhotoLastChangedTime(String authToken) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(ConstantManager.USER_PHOTO_DOWNLOAD_DATE_KEY, authToken);
+        editor.apply();
+    }
+
+    public String getPhotoLastChangedTime() {
+        return mSharedPreferences.getString(ConstantManager.USER_PHOTO_DOWNLOAD_DATE_KEY, "null");
     }
 }

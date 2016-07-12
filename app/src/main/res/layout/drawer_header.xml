@@ -28,7 +28,7 @@
             android:text="Новоселов Роман" />
 
         <TextView
-            android:id="@+id/user_e_mail_txt_txt"
+            android:id="@+id/user_e_mail_txt"
             style="@style/drawer_header_text"
             android:fontFamily="sans-serif"
             android:text="mail@e-mail.com" />

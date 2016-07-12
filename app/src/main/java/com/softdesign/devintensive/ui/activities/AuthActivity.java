@@ -11,9 +11,13 @@ import android.widget.EditText;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +34,6 @@ public class AuthActivity extends BaseActivity {
     EditText mLogin;
     @BindView(R.id.auth_et_password)
     EditText mPassword;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,25 +52,40 @@ public class AuthActivity extends BaseActivity {
         signIn();
     }
 
+    /**
+     * Метод вызывает всплывающее сообщение в {@link Snackbar}
+     * @param message текст сообщения
+     */
     private void showSnackBar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Метод вызывается, если пользователь нажал на "Забыли пароль?"
+     */
     private void rememberPassword() {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://devintensive.softdesign-apps.ru/forgotpass"));
         startActivity(intent);
     }
 
+    /**
+     * Метод выполняется при удачном выполнении запроса к API
+     * @param response ответ сервера
+     */
     private void loginSuccess(UserModelRes response) {
         DataManager.getInstance().getPreferenceManager().saveAuthToken(response.getData().getToken());
         DataManager.getInstance().getPreferenceManager().saveUserId(response.getData().getUser().getId());
 
         saveUserValues(response);
+        saveUserProfileValues(response);
         Intent loginIntent = new Intent(this, MainActivity.class);
         startActivity(loginIntent);
         ActivityCompat.finishAfterTransition(this);
     }
 
+    /**
+     * Метод выполняет запрос на получение токена и информации о пользователе
+     */
     private void signIn() {
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
 
@@ -94,12 +112,44 @@ public class AuthActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Метод записи информации о активности пользователя в {@link android.content.SharedPreferences}
+     *
+     * @param userModelRes POJO обьект модели с данными
+     */
     private void saveUserValues(UserModelRes userModelRes) {
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
         int[] userValues = {
                 userModelRes.getData().getUser().getProfileValues().getRaiting(),
                 userModelRes.getData().getUser().getProfileValues().getLinesCode(),
                 userModelRes.getData().getUser().getProfileValues().getProjects()
         };
-        DataManager.getInstance().getPreferenceManager().saveUserProfileValues(userValues);
+        preferencesManager.saveUserProfileValues(userValues);
+
+        StringBuilder name = new StringBuilder();
+        name.append(userModelRes.getData().getUser().getSecondName())
+                .append(" ")
+                .append(userModelRes.getData().getUser().getFirstName());
+        preferencesManager.saveUserName(name.toString());
+
+        preferencesManager.saveUserPhoto(Uri.parse(userModelRes.getData().getUser().getPublicInfo().getPhoto()));
+        preferencesManager.saveUserAvatar(Uri.parse(userModelRes.getData().getUser().getPublicInfo().getAvatar()));
+
+        Log.d("TAG", userModelRes.getData().getUser().getPublicInfo().getUpdated());
+    }
+
+    /**
+     * Метод записи информации о профиле пользователя в {@link android.content.SharedPreferences}
+     *
+     * @param userModelRes POJO обьект модели с данными
+     */
+    private void saveUserProfileValues(UserModelRes userModelRes) {
+        List<String> userData = new ArrayList<>();
+        userData.add(userModelRes.getData().getUser().getContacts().getPhone());
+        userData.add(userModelRes.getData().getUser().getContacts().getEmail());
+        userData.add(userModelRes.getData().getUser().getContacts().getVk());
+        userData.add(userModelRes.getData().getUser().getRepositories().getRepo().get(0).getGit());
+        userData.add(userModelRes.getData().getUser().getPublicInfo().getBio());
+        DataManager.getInstance().getPreferenceManager().saveUserProfileData(userData);
     }
 }

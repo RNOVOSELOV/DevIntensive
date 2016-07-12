@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
+import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
 import com.softdesign.devintensive.utils.RoundedTransformation;
@@ -312,6 +313,7 @@ public class MainActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(DataManager.getInstance().getPreferenceManager().getUserName());
         }
     }
 
@@ -319,13 +321,19 @@ public class MainActivity extends BaseActivity {
      * Метод настраивает {@link NavigationView} при запуске приложения
      */
     private void setupDrawer() {
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
         NavigationView navigationView = ((NavigationView) findViewById(R.id.navigation_view));
         ImageView iv = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
         Picasso.with(this)
-                .load(R.drawable.photo)
+                .load(preferencesManager.getUserAvatar())
                 .transform(new RoundedTransformation())
                 .into(iv);
 
+        TextView name = ((TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt));
+        name.setText(preferencesManager.getUserName());
+        TextView email = ((TextView) navigationView.getHeaderView(0).findViewById(R.id.user_e_mail_txt));
+        String e_mail = preferencesManager.loadUserProfileData().get(PROFILE_ET_EMAIL_POSITION);
+        email.setText(e_mail);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
