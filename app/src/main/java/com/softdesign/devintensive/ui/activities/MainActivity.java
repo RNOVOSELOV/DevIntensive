@@ -575,7 +575,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setValidators () {
-        final String PHONE_REGEXP = "^\\d{11,20}$";
+        final String PHONE_REGEXP = "^[\\d\\(\\)\\-+ ]{11,20}$";
         final String EMAIL_REGEXP = "^[A-Za-z0-9+_.-]{3,}+@([A-Za-z0-9+_.-]{2,})+\\.+[a-zA-Z]{2,}$";
         final String VK_REGEXP = "^vk\\.com\\/[\\w]{3,}+$";
         final String GITHUB_REGEXP = "^github\\.com\\/[\\w]{3,}+$";
