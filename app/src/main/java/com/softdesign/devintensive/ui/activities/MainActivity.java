@@ -112,6 +112,7 @@ public class MainActivity extends BaseActivity {
     private final int PROFILE_ET_EMAIL_POSITION = 1;
     private final int PROFILE_ET_VK_POSITION = 2;
     private final int PROFILE_ET_GITHUB_POSITION = 3;
+    private boolean mPhotoIsChanged = false;
 
     /**
      * Метод вызывается при старте активити
@@ -162,6 +163,7 @@ public class MainActivity extends BaseActivity {
                 ll.setPadding(0, llPadding, 0, llPadding);
             }
         }
+        mPhotoIsChanged = false;
     }
 
     /**
@@ -278,6 +280,7 @@ public class MainActivity extends BaseActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     mSelectedImage = data.getData();
                     insertProfileImage(mSelectedImage);
+                    mPhotoFile = new File(AppUtils.getPathByUri(mSelectedImage));
                 }
                 break;
             case ConstantManager.REQUEST_PERMISSION_CODE:
@@ -304,29 +307,7 @@ public class MainActivity extends BaseActivity {
                 .into(mProfileImage);
 
         preferencesManager.saveUserPhoto(selectedImage);
-        if (NetworkStatusChecker.isNetworkAvailable(this)) {
-            File file = new File(AppUtils.getPathByUri(selectedImage));
-            Call<UploadProfilePhotoRes> call = DataManager.getInstance().uploadPhoto(preferencesManager.getUserId(), file);
-            call.enqueue(new Callback<UploadProfilePhotoRes>() {
-                @Override
-                public void onResponse(Call<UploadProfilePhotoRes> call, Response<UploadProfilePhotoRes> response) {
-                    if (response.code() == 200) {
-                        showSnackBar("Фото успешно загружено");
-                    } else if (response.code() == 401) {
-                        showSnackBar("Неверный токен");
-                    } else {
-                        showSnackBar("Видимо что-то случилось");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<UploadProfilePhotoRes> call, Throwable t) {
-                    showSnackBar("Ошибка загрузки, попробуйте позже");
-                }
-            });
-        } else {
-            showSnackBar("Сеть недоступна");
-        }
+        mPhotoIsChanged = true;
     }
 
     /**
@@ -615,6 +596,33 @@ public class MainActivity extends BaseActivity {
         if (mCurrentEditMode) {
             mUserInfoList.get(PROFILE_ET_PHONE_POSITION).requestFocus();
             mUserInfoList.get(PROFILE_ET_PHONE_POSITION).setSelection(mUserInfoList.get(PROFILE_ET_PHONE_POSITION).getText().length());
+        } else if (mPhotoIsChanged){
+            mPhotoIsChanged = false;
+            if (NetworkStatusChecker.isNetworkAvailable(this)) {
+                Call<UploadProfilePhotoRes> call = DataManager.getInstance().uploadPhoto(DataManager.getInstance().getPreferenceManager().getUserId(), mPhotoFile);
+                call.enqueue(new Callback<UploadProfilePhotoRes>() {
+                    @Override
+                    public void onResponse(Call<UploadProfilePhotoRes> call, Response<UploadProfilePhotoRes> response) {
+                        if (response.code() == 200) {
+                            showSnackBar("Фото успешно загружено");
+                        } else if (response.code() == 401) {
+                            Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                            intent.putExtra(ConstantManager.USER_AUTORIZATION_FAILED, true);
+                            startActivity(intent);
+                            ActivityCompat.finishAfterTransition(MainActivity.this);
+                        } else {
+                            showSnackBar("Видимо что-то случилось");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UploadProfilePhotoRes> call, Throwable t) {
+                        showSnackBar("Ошибка загрузки, попробуйте позже");
+                    }
+                });
+            } else {
+                showSnackBar("Сеть недоступна");
+            }
         }
     }
 

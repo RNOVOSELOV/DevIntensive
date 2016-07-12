@@ -14,6 +14,7 @@ import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
 
 import java.util.ArrayList;
@@ -35,11 +36,24 @@ public class AuthActivity extends BaseActivity {
     @BindView(R.id.auth_et_password)
     EditText mPassword;
 
+    boolean isTokenFailed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+        Intent intent = getIntent();
+        isTokenFailed = intent.getBooleanExtra(ConstantManager.USER_AUTORIZATION_FAILED, false);
         ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isTokenFailed) {
+            showSnackBar("Произошла ошибка работы с сетью, необходима повторная аутотентификация.");
+            isTokenFailed = true;
+        }
     }
 
     @OnClick(R.id.auth_tv_remember)
