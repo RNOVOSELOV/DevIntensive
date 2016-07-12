@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -58,13 +59,13 @@ public class AuthActivity extends BaseActivity {
     }
 
     private void loginSuccess(UserModelRes response) {
-        showSnackBar(response.getData().getToken());
         DataManager.getInstance().getPreferenceManager().saveAuthToken(response.getData().getToken());
         DataManager.getInstance().getPreferenceManager().saveUserId(response.getData().getUser().getId());
 
         saveUserValues(response);
         Intent loginIntent = new Intent(this, MainActivity.class);
         startActivity(loginIntent);
+        ActivityCompat.finishAfterTransition(this);
     }
 
     private void signIn() {

@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -43,7 +41,7 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
-import com.softdesign.devintensive.utils.RoundedAvatarDrawable;
+import com.softdesign.devintensive.utils.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -322,12 +320,11 @@ public class MainActivity extends BaseActivity {
      */
     private void setupDrawer() {
         NavigationView navigationView = ((NavigationView) findViewById(R.id.navigation_view));
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.photo);
-        RoundedAvatarDrawable roundedAvatarDrawable = new RoundedAvatarDrawable(bitmap);
         ImageView iv = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
-        if (iv != null) {
-            iv.setImageDrawable(roundedAvatarDrawable);
-        }
+        Picasso.with(this)
+                .load(R.drawable.photo)
+                .transform(new RoundedTransformation())
+                .into(iv);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
