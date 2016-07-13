@@ -4,13 +4,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.TypedValue;
 
+import com.softdesign.devintensive.data.managers.DataManager;
+
 /**
  * Created by roman on 10.07.16.
  */
 public class UiHelper {
 
     public static int getStatusBarHeight() {
-        Context context = DevIntensiveApplication.getAppContext();
+        Context context = DataManager.getInstance().getContext();
         int statusBarHeight = 0;
         int statusBarId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (statusBarId > 0) {
@@ -20,7 +22,7 @@ public class UiHelper {
     }
 
     public static int getActionBarHeight() {
-        Context context = DevIntensiveApplication.getAppContext();
+        Context context = DataManager.getInstance().getContext();
         int actionBarHeight = 0;
         TypedValue tv = new TypedValue();
         if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {

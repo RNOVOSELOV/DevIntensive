@@ -11,7 +11,7 @@ import android.preference.PreferenceManager;
 public class DevIntensiveApplication extends Application {
 
     private static Context sContext;
-    public static SharedPreferences sSharedPreferences;
+    private static SharedPreferences sSharedPreferences;
 
     @Override
     public void onCreate() {

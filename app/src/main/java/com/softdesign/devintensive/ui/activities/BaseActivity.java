@@ -1,13 +1,12 @@
 package com.softdesign.devintensive.ui.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.softdesign.devintensive.utils.ContentManager;
+import com.softdesign.devintensive.utils.ConstantManager;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
  * Created by roman on 27.06.16.
  */
 public class BaseActivity extends AppCompatActivity {
-    final String TAG = ContentManager.TAG_PREFIX + BaseActivity.class.getSimpleName();
+    final String TAG = ConstantManager.TAG_PREFIX + BaseActivity.class.getSimpleName();
 
     /**
      * Метод показывает ошибку в виде всплывающего сообщения {@link Toast}

@@ -31,4 +31,10 @@
     <string name="string_warning_does_not_match_activity">Не найдено приложений для выполнения данного действия</string>
     <string name="error_no_data">Необходимо заполнить поле</string>
     <string name="error_uncorrect_data">Введены некорректные данные</string>
+
+    <string name="auth.authorization_enter">Войти</string>
+    <string name="auth.email">Введите e-mail</string>
+    <string name="auth.password">Введите пароль</string>
+    <string name="auth.login">Войти</string>
+    <string name="auth.remember">Забыли пароль?</string>
 </resources>

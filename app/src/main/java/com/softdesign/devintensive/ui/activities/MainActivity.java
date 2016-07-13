@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -29,22 +27,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
-import com.softdesign.devintensive.utils.ContentManager;
+import com.softdesign.devintensive.data.managers.PreferencesManager;
+import com.softdesign.devintensive.data.network.res.UploadProfilePhotoRes;
+import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.utils.AppUtils;
+import com.softdesign.devintensive.utils.ConstantManager;
+import com.softdesign.devintensive.utils.NetworkStatusChecker;
 import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
-import com.softdesign.devintensive.utils.RoundedAvatarDrawable;
+import com.softdesign.devintensive.utils.RoundedTransformation;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -59,10 +63,14 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends BaseActivity {
 
-    public static final String TAG = ContentManager.TAG_PREFIX + MainActivity.class.getSimpleName();
+    public static final String TAG = ConstantManager.TAG_PREFIX + MainActivity.class.getSimpleName();
     private boolean mCurrentEditMode = false;
     private AppBarLayout.LayoutParams mAppBarParams = null;
     private File mPhotoFile = null;
@@ -97,10 +105,14 @@ public class MainActivity extends BaseActivity {
     @BindViews({R.id.et_phone, R.id.et_email, R.id.et_vk, R.id.et_github, R.id.et_about})
     List<EditText> mUserInfoList;
 
+    @BindViews({R.id.main_tv_raiting, R.id.main_tv_code_lines, R.id.main_tv_projects})
+    List<TextView> mUserValuesViews;
+
     private final int PROFILE_ET_PHONE_POSITION = 0;
     private final int PROFILE_ET_EMAIL_POSITION = 1;
     private final int PROFILE_ET_VK_POSITION = 2;
     private final int PROFILE_ET_GITHUB_POSITION = 3;
+    private boolean mPhotoIsChanged = false;
 
     /**
      * Метод вызывается при старте активити
@@ -122,7 +134,8 @@ public class MainActivity extends BaseActivity {
 
         setupToolbar();
         setupDrawer();
-        loadUserInfoValues();
+        initUserFields();
+        initUserInfoValue();
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -143,13 +156,14 @@ public class MainActivity extends BaseActivity {
             mCurrentEditMode = false;
 
         } else {
-            mCurrentEditMode = savedInstanceState.getBoolean(ContentManager.EDIT_MODE_KEY, false);
+            mCurrentEditMode = savedInstanceState.getBoolean(ConstantManager.EDIT_MODE_KEY, false);
             setEditMode(mCurrentEditMode);
-            int llPadding = savedInstanceState.getInt(ContentManager.STAT_PANEL_PADDING_KEY, getResources().getDimensionPixelSize(R.dimen.padding_large_24));
+            int llPadding = savedInstanceState.getInt(ConstantManager.STAT_PANEL_PADDING_KEY, getResources().getDimensionPixelSize(R.dimen.padding_large_24));
             if (ll != null) {
                 ll.setPadding(0, llPadding, 0, llPadding);
             }
         }
+        mPhotoIsChanged = false;
     }
 
     /**
@@ -160,10 +174,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(ContentManager.EDIT_MODE_KEY, mCurrentEditMode);
+        outState.putBoolean(ConstantManager.EDIT_MODE_KEY, mCurrentEditMode);
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.ll_stat_panel);
-        outState.putInt(ContentManager.STAT_PANEL_PADDING_KEY, ll.getPaddingTop());
+        outState.putInt(ConstantManager.STAT_PANEL_PADDING_KEY, ll.getPaddingTop());
     }
 
     @Override
@@ -256,19 +270,20 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case ContentManager.REQUEST_CAMERA_PHOTO:
+            case ConstantManager.REQUEST_CAMERA_PHOTO:
                 if (resultCode == RESULT_OK && mPhotoFile != null) {
                     mSelectedImage = Uri.fromFile(mPhotoFile);
                     insertProfileImage(mSelectedImage);
                 }
                 break;
-            case ContentManager.REQUEST_GALLERY_PICTURE:
+            case ConstantManager.REQUEST_GALLERY_PICTURE:
                 if (resultCode == RESULT_OK && data != null) {
                     mSelectedImage = data.getData();
                     insertProfileImage(mSelectedImage);
+                    mPhotoFile = new File(AppUtils.getPathByUri(mSelectedImage));
                 }
                 break;
-            case ContentManager.REQUEST_PERMISSION_CODE:
+            case ConstantManager.REQUEST_PERMISSION_CODE:
                 showImageProviderChooseDialog();
                 break;
             default:
@@ -277,6 +292,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void insertProfileImage(Uri selectedImage) {
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -287,9 +303,11 @@ public class MainActivity extends BaseActivity {
                 .placeholder(R.drawable.collapsing_photo)
                 .resize(width, getResources().getDimensionPixelOffset(R.dimen.size_profile_image))
                 .centerCrop()
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .into(mProfileImage);
 
-        DataManager.getInstance().getPreferenceManager().saveUserPhoto(selectedImage);
+        preferencesManager.saveUserPhoto(selectedImage);
+        mPhotoIsChanged = true;
     }
 
     /**
@@ -311,6 +329,7 @@ public class MainActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(DataManager.getInstance().getPreferenceManager().getUserName());
         }
     }
 
@@ -318,14 +337,19 @@ public class MainActivity extends BaseActivity {
      * Метод настраивает {@link NavigationView} при запуске приложения
      */
     private void setupDrawer() {
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
         NavigationView navigationView = ((NavigationView) findViewById(R.id.navigation_view));
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.photo);
-        RoundedAvatarDrawable roundedAvatarDrawable = new RoundedAvatarDrawable(bitmap);
         ImageView iv = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
-        if (iv != null) {
-            iv.setImageDrawable(roundedAvatarDrawable);
-        }
+        Picasso.with(this)
+                .load(preferencesManager.getUserAvatar())
+                .transform(new RoundedTransformation())
+                .into(iv);
 
+        TextView name = ((TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name_txt));
+        name.setText(preferencesManager.getUserName());
+        TextView email = ((TextView) navigationView.getHeaderView(0).findViewById(R.id.user_e_mail_txt));
+        String e_mail = preferencesManager.loadUserProfileData().get(PROFILE_ET_EMAIL_POSITION);
+        email.setText(e_mail);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -367,7 +391,7 @@ public class MainActivity extends BaseActivity {
     /**
      * Метод чтения информации о пользователе из {@link android.content.SharedPreferences}
      */
-    private void loadUserInfoValues() {
+    private void initUserInfoValue() {
         List<String> userData = DataManager.getInstance().getPreferenceManager().loadUserProfileData();
         for (int i = 0; i < userData.size(); i++) {
             mUserInfoList.get(i).setText(userData.get(i));
@@ -389,11 +413,11 @@ public class MainActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Intent takeGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             takeGalleryIntent.setType("image/*");
-            startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_gallery_picker)), ContentManager.REQUEST_GALLERY_PICTURE);
+            startActivityForResult(Intent.createChooser(takeGalleryIntent, getString(R.string.user_profile_gallery_picker)), ConstantManager.REQUEST_GALLERY_PICTURE);
         } else {
             ActivityCompat.requestPermissions(this, new String[]{
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
-            }, ContentManager.GALLERY_REQUEST_PERMISSION_CODE);
+            }, ConstantManager.GALLERY_REQUEST_PERMISSION_CODE);
             Snackbar.make(mCoordinatorLayout, R.string.satring_need_permissions, Snackbar.LENGTH_LONG)
                     .setAction(R.string.string_allow, new View.OnClickListener() {
                         @Override
@@ -418,13 +442,13 @@ public class MainActivity extends BaseActivity {
             }
             if (mPhotoFile != null) {
                 takeCaptureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));
-                startActivityForResult(takeCaptureIntent, ContentManager.REQUEST_CAMERA_PHOTO);
+                startActivityForResult(takeCaptureIntent, ConstantManager.REQUEST_CAMERA_PHOTO);
             }
         } else {
             ActivityCompat.requestPermissions(this, new String[]{
                     android.Manifest.permission.CAMERA,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, ContentManager.CAMERA_REQUEST_PERMISSION_CODE);
+            }, ConstantManager.CAMERA_REQUEST_PERMISSION_CODE);
             Snackbar.make(mCoordinatorLayout, R.string.satring_need_permissions, Snackbar.LENGTH_LONG)
                     .setAction(R.string.string_allow, new View.OnClickListener() {
                         @Override
@@ -435,14 +459,21 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void initUserFields() {
+        List<String> userData = DataManager.getInstance().getPreferenceManager().loadUserProfileValues();
+        for (int i = 0; i < userData.size(); i++) {
+            mUserValuesViews.get(i).setText(userData.get(i));
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == ContentManager.CAMERA_REQUEST_PERMISSION_CODE && grantResults.length == 2) {
+        if (requestCode == ConstantManager.CAMERA_REQUEST_PERMISSION_CODE && grantResults.length == 2) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 loadPhotoFromCamera();
             }
-        } else if (requestCode == ContentManager.GALLERY_REQUEST_PERMISSION_CODE && grantResults.length == 1) {
+        } else if (requestCode == ConstantManager.GALLERY_REQUEST_PERMISSION_CODE && grantResults.length == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 loadPhotoFromGallery();
             }
@@ -523,7 +554,7 @@ public class MainActivity extends BaseActivity {
 
     public void openApplicationSettings() {
         Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
-        startActivityForResult(appSettingsIntent, ContentManager.REQUEST_PERMISSION_CODE);
+        startActivityForResult(appSettingsIntent, ConstantManager.REQUEST_PERMISSION_CODE);
     }
 
     private void setOnFocusChangeListener() {
@@ -544,7 +575,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setValidators () {
-        final String PHONE_REGEXP = "^\\d{11,20}$";
+        final String PHONE_REGEXP = "^[\\d\\(\\)\\-+ ]{11,20}$";
         final String EMAIL_REGEXP = "^[A-Za-z0-9+_.-]{3,}+@([A-Za-z0-9+_.-]{2,})+\\.+[a-zA-Z]{2,}$";
         final String VK_REGEXP = "^vk\\.com\\/[\\w]{3,}+$";
         final String GITHUB_REGEXP = "^github\\.com\\/[\\w]{3,}+$";
@@ -565,6 +596,33 @@ public class MainActivity extends BaseActivity {
         if (mCurrentEditMode) {
             mUserInfoList.get(PROFILE_ET_PHONE_POSITION).requestFocus();
             mUserInfoList.get(PROFILE_ET_PHONE_POSITION).setSelection(mUserInfoList.get(PROFILE_ET_PHONE_POSITION).getText().length());
+        } else if (mPhotoIsChanged){
+            mPhotoIsChanged = false;
+            if (NetworkStatusChecker.isNetworkAvailable(this)) {
+                Call<UploadProfilePhotoRes> call = DataManager.getInstance().uploadPhoto(DataManager.getInstance().getPreferenceManager().getUserId(), mPhotoFile);
+                call.enqueue(new Callback<UploadProfilePhotoRes>() {
+                    @Override
+                    public void onResponse(Call<UploadProfilePhotoRes> call, Response<UploadProfilePhotoRes> response) {
+                        if (response.code() == 200) {
+                            showSnackBar("Фото успешно загружено");
+                        } else if (response.code() == 401) {
+                            Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                            intent.putExtra(ConstantManager.USER_AUTORIZATION_FAILED, true);
+                            startActivity(intent);
+                            ActivityCompat.finishAfterTransition(MainActivity.this);
+                        } else {
+                            showSnackBar("Видимо что-то случилось");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UploadProfilePhotoRes> call, Throwable t) {
+                        showSnackBar("Ошибка загрузки, попробуйте позже");
+                    }
+                });
+            } else {
+                showSnackBar("Сеть недоступна");
+            }
         }
     }
 

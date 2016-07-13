@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.managers.DataManager;
 
 import java.util.regex.Pattern;
 
@@ -30,9 +31,9 @@ public class ProfileDataTextWatcher implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         if (charSequence.toString().trim().isEmpty()) {
-            mTil.setError(DevIntensiveApplication.getAppContext().getString(R.string.error_no_data));
+            mTil.setError(DataManager.getInstance().getContext().getString(R.string.error_no_data));
         } else if (!mPattern.matcher(charSequence.toString().trim()).matches()) {
-            mTil.setError(DevIntensiveApplication.getAppContext().getString(R.string.error_uncorrect_data));
+            mTil.setError(DataManager.getInstance().getContext().getString(R.string.error_uncorrect_data));
         } else {
             mTil.setError(null);
             mTil.setErrorEnabled(false);

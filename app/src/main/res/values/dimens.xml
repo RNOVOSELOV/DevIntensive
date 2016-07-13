@@ -23,10 +23,12 @@
     <dimen name="spacing_large_56">56dp</dimen>
     <dimen name="spacing_big_64">64dp</dimen>
     <dimen name="spacing_great_72">72dp</dimen>
+    <dimen name="spacing_greatest">240dp</dimen>
 
     <!-- Margins -->
     <dimen name="margin_little_8">8dp</dimen>
     <dimen name="margin_small_16">16dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
     <dimen name="margin_normal_24">24dp</dimen>
     <dimen name="margin_increased_32">32dp</dimen>
     <dimen name="margin_medium_40">40dp</dimen>
@@ -40,6 +42,7 @@
     <dimen name="padding_normal_8">8dp</dimen>
     <dimen name="padding_increased_12">12dp</dimen>
     <dimen name="padding_large_24">24dp</dimen>
+    <dimen name="padding_big_32">32dp</dimen>
 
     <!-- -->
     <dimen name="size_small_24">24dp</dimen>
@@ -49,5 +52,7 @@
     <dimen name="size_delimeter_line">1dp</dimen>
     <dimen name="size_profile_image">256dp</dimen>
     <dimen name="margin_fab_right">8dp</dimen>
-
+    <dimen name="elevation_cardview">8dp</dimen>
+    <dimen name="radius_card">2dp</dimen>
+    <dimen name="spacing_auth_button">128dp</dimen>
 </resources>
