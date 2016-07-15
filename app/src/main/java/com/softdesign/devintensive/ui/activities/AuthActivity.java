@@ -108,7 +108,11 @@ public class AuthActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
                     if (response.code() == 200) {
-                        loginSuccess(response.body());
+                        try {
+                            loginSuccess(response.body());
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
                     } else if (response.code() == 404) {
                         showSnackBar("Неверный логин или пароль");
                     } else {

@@ -7,6 +7,7 @@ import com.softdesign.devintensive.data.network.RestService;
 import com.softdesign.devintensive.data.network.ServiceGenerator;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UploadProfilePhotoRes;
+import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.utils.DevIntensiveApplication;
 
@@ -58,12 +59,15 @@ public class DataManager {
         return mRestService.loginUser(userLoginReq);
     }
 
-    public Call<UploadProfilePhotoRes> uploadPhoto (String userId, File photoFile) {
+    public Call<UploadProfilePhotoRes> uploadPhoto(String userId, File photoFile) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), photoFile);
         MultipartBody.Part body = MultipartBody.Part.createFormData("photo", photoFile.getName(), requestFile);
         return mRestService.uploadPhoto(userId, body);
     }
 
+    public Call<UserListRes> getUsersList () {
+        return mRestService.getUserList();
+    }
     // endregion
 
     // region ============== DATABASE ==============

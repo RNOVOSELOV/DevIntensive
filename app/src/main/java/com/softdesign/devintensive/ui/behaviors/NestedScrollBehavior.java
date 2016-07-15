@@ -1,4 +1,4 @@
-package com.softdesign.devintensive.ui.view.behaviors;
+package com.softdesign.devintensive.ui.behaviors;
 
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
