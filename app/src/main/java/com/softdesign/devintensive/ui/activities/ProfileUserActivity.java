@@ -1,10 +1,12 @@
 package com.softdesign.devintensive.ui.activities;
 
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -54,6 +56,7 @@ public class ProfileUserActivity extends AppCompatActivity {
         mRepoList.setAdapter(repositoryAdapter);
 
         mUserBio.setText(userDto.getmBio());
+
         mRaiting.setText(userDto.getmRating());
         mCodeLines.setText(userDto.getmCodeLines());
         mProjects.setText(userDto.getmProjects());
