@@ -353,7 +353,18 @@ public class MainActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                showSnackBar(item.getTitle().toString());
+                switch (item.getItemId()) {
+                    case R.id.user_profile_menu:
+                        Intent intentProfile = new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(intentProfile);
+                        ActivityCompat.finishAfterTransition(MainActivity.this);
+                        break;
+                    case R.id.team_menu:
+                        Intent intentTeam = new Intent(MainActivity.this, UserListActivity.class);
+                        startActivity(intentTeam);
+                        ActivityCompat.finishAfterTransition(MainActivity.this);
+                        break;
+                }
                 item.setChecked(true);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 return false;

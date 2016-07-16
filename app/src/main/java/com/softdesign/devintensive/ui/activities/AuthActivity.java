@@ -102,11 +102,13 @@ public class AuthActivity extends BaseActivity {
      */
     private void signIn() {
         if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            showProgress();
 
             Call<UserModelRes> call = DataManager.getInstance().loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));
             call.enqueue(new Callback<UserModelRes>() {
                 @Override
                 public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                    hideProgress();
                     if (response.code() == 200) {
                         try {
                             loginSuccess(response.body());
@@ -122,6 +124,7 @@ public class AuthActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<UserModelRes> call, Throwable t) {
+                    hideProgress();
                     showSnackBar("Ошибка входа, попробуйте позже");
                 }
             });

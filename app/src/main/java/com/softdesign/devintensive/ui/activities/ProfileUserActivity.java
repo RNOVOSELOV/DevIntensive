@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,10 +26,8 @@ import com.softdesign.devintensive.utils.ConstantManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
-
-public class ProfileUserActivity extends AppCompatActivity {
+public class ProfileUserActivity extends BaseActivity {
 
     private Toolbar mToolbar;
     private ImageView mProfileImage;
@@ -57,12 +54,6 @@ public class ProfileUserActivity extends AppCompatActivity {
         mCoordinatorLayout = ((CoordinatorLayout) findViewById(R.id.main_coordinator_container));
         setupToolbar();
         initProfileData();
-    }
-
-    public boolean deviceHaveIntentActivity(Intent intent) {
-        PackageManager packageManager = getPackageManager();
-        List<ResolveInfo> activitiesList = packageManager.queryIntentActivities(intent, 0);
-        return activitiesList.size() > 0;
     }
 
     private void initProfileData() {

@@ -17,8 +17,10 @@
     </android.support.design.widget.TextInputLayout>
 
     <ImageView
+        style="@style/icon"
         android:id="@+id/item_repo_iv"
-        style="@style/icon.right"
+        android:layout_marginTop="@dimen/margin_normal_24"
+        android:layout_gravity="top|right"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

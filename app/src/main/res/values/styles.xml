@@ -28,6 +28,7 @@
 
     <style name="icon.right">
         <item name="android:layout_marginTop">@dimen/size_small_24</item>
+        <item name="android:layout_marginRight">@dimen/spacing_bigger_32</item>
         <item name="android:layout_gravity">top|right</item>
     </style>
 
