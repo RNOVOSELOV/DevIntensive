@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -54,6 +55,12 @@ public class ProfileUserActivity extends AppCompatActivity {
 
         final RepositoryAdapter repositoryAdapter = new RepositoryAdapter(this, repo);
         mRepoList.setAdapter(repositoryAdapter);
+
+
+        int baseListViewHeight = getResources().getDimensionPixelSize(R.dimen.size_big_72);
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRepoList.getLayoutParams();
+        lp.height = baseListViewHeight * repo.size();
+        mRepoList.setLayoutParams(lp);
 
         mUserBio.setText(userDto.getmBio());
 
