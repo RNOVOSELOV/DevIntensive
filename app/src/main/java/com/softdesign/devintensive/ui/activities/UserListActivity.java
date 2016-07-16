@@ -1,19 +1,24 @@
 package com.softdesign.devintensive.ui.activities;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebViewFragment;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +28,7 @@ import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.storage.model.UserDto;
 import com.softdesign.devintensive.ui.adapters.UserAdapter;
+import com.softdesign.devintensive.ui.fragments.RetainedFragment;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.RoundedTransformation;
 import com.squareup.picasso.Picasso;
@@ -35,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class UserListActivity extends BaseActivity {
+public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     private static String TAG = ConstantManager.TAG_PREFIX + " UserListActivity";
 
@@ -55,6 +61,8 @@ public class UserListActivity extends BaseActivity {
     private UserAdapter mUserAdapter;
     private List<UserListRes.UserData> mUsers;
 
+    private RetainedFragment dataFragment;
+    private FragmentManager fragmentManager;
 
     @Override
 
@@ -70,7 +78,27 @@ public class UserListActivity extends BaseActivity {
         mDataManager = DataManager.getInstance();
         setupToolbar();
         setupDrawer();
-        loadUsers();
+
+        fragmentManager = getFragmentManager();
+        dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
+        if (dataFragment == null) {
+            loadUsers();
+        } else {
+            mUsers = dataFragment.getData();
+            createAdapter();
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+
+        return true;
     }
 
     @Override
@@ -95,16 +123,12 @@ public class UserListActivity extends BaseActivity {
                 if (response.code() == 200) {
                     try {
                         mUsers = response.body().getData();
-                        mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
-                            @Override
-                            public void onUserItemClickListener(int position) {
-                                UserDto user = new UserDto(mUsers.get(position));
-                                Intent profileIntent = new Intent(UserListActivity.this, ProfileUserActivity.class);
-                                profileIntent.putExtra(ConstantManager.PARCELABLE_KEY, user);
-                                startActivity(profileIntent);
-                            }
-                        });
-                        mRecyclerView.setAdapter(mUserAdapter);
+                        createAdapter ();
+
+                        dataFragment = new RetainedFragment();
+                        fragmentManager.beginTransaction().add(dataFragment, "user_data").commit();
+                        dataFragment.setData(mUsers);
+
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
@@ -124,6 +148,19 @@ public class UserListActivity extends BaseActivity {
                 hideProgress();
             }
         });
+    }
+
+    private void createAdapter() {
+        mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
+            @Override
+            public void onUserItemClickListener(int position) {
+                UserDto user = new UserDto(mUsers.get(position));
+                Intent profileIntent = new Intent(UserListActivity.this, ProfileUserActivity.class);
+                profileIntent.putExtra(ConstantManager.PARCELABLE_KEY, user);
+                startActivity(profileIntent);
+            }
+        });
+        mRecyclerView.setAdapter(mUserAdapter);
     }
 
     private void setupDrawer() {
@@ -179,4 +216,16 @@ public class UserListActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        mUserAdapter.getFilter().filter(newText);
+        return true;
+    }
+
 }

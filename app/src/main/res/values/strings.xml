@@ -38,4 +38,5 @@
     <string name="auth.login">Войти</string>
     <string name="auth.remember">Забыли пароль?</string>
     <string name="string_item_user_goto">Просмотр</string>
+    <string name="hint_search">Поиск</string>
 </resources>

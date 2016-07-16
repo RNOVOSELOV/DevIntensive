@@ -3,10 +3,13 @@ package com.softdesign.devintensive.ui.adapters;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
@@ -14,21 +17,27 @@ import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.ui.views.AspectRatioImageView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by roman on 15.07.16.
  */
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements Filterable {
 
     Context mContext;
     List<UserListRes.UserData> mUsers;
+    List<UserListRes.UserData> mFilteredList;
     UserViewHolder.CustomClickListener mCustomClickListener;
+    private CustomFilter mFilter;
 
     public UserAdapter(Context mContext, List<UserListRes.UserData> mUsers, UserViewHolder.CustomClickListener customClickListener) {
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.mCustomClickListener = customClickListener;
+        mFilteredList = new ArrayList<>();
+        mFilteredList.addAll(mUsers);
+        mFilter = new CustomFilter(UserAdapter.this);
     }
 
     @Override
@@ -39,14 +48,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        UserListRes.UserData user = mUsers.get(position);
+        UserListRes.UserData user = mFilteredList.get(position);
         Picasso.with(mContext)
                 .load(user.getPublicInfo().getPhoto())
                 .placeholder(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
                 .error(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
                 .fit()
                 .into(holder.mUserPhoto);
-        holder.mFullName.setText(user.getName());
+        holder.mFullName.setText(user.getFullName());
         holder.mRating.setText(String.valueOf(user.getProfileValues().getRait()));
         holder.mCodeLines.setText(String.valueOf(user.getProfileValues().getLinesCode()));
         holder.mProjects.setText(String.valueOf(user.getProfileValues().getProjects()));
@@ -61,7 +70,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public int getItemCount() {
-        return mUsers.size();
+        return mFilteredList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -105,6 +119,41 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         public interface CustomClickListener {
             void onUserItemClickListener(int position);
+        }
+    }
+
+    public class CustomFilter extends Filter {
+
+        private UserAdapter mAdapter;
+
+        public CustomFilter(UserAdapter mAdapter) {
+            super();
+            this.mAdapter = mAdapter;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            mFilteredList.clear();
+            final FilterResults results = new FilterResults();
+            if (charSequence.length() == 0) {
+                mFilteredList.addAll(mUsers);
+            } else {
+                final String filterPattern = charSequence.toString().toLowerCase().trim();
+                for (final UserListRes.UserData data : mUsers) {
+                    if (data.getFirstName().toLowerCase().trim().startsWith(filterPattern) || data.getSecondName().toLowerCase().trim().startsWith(filterPattern)) {
+                        mFilteredList.add(data);
+                    }
+                }
+            }
+            Log.d("TAG", String.valueOf(mFilteredList.size()));
+            results.values = mFilteredList;
+            results.count = mFilteredList.size();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            mAdapter.notifyDataSetChanged();
         }
     }
 }

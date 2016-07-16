@@ -22,7 +22,7 @@ public class UserDto implements Parcelable {
 
     public UserDto(UserListRes.UserData userData) {
         this.mPhoto = userData.getPublicInfo().getPhoto();
-        this.mFullName = userData.getName();
+        this.mFullName = userData.getFullName();
         this.mRating = String.valueOf(userData.getProfileValues().getRait());
         this.mCodeLines = String.valueOf(userData.getProfileValues().getLinesCode());
         this.mProjects = String.valueOf(userData.getProfileValues().getProjects());
