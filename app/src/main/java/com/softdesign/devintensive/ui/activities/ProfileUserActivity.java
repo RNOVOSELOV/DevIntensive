@@ -40,7 +40,7 @@ public class ProfileUserActivity extends AppCompatActivity {
         mProjects = ((TextView) findViewById(R.id.main_tv_projects));
         mCodeLines = ((TextView) findViewById(R.id.main_tv_code_lines));
         mRaiting = ((TextView) findViewById(R.id.main_tv_raiting));
-        mUserBio = ((EditText) findViewById(R.id.bio_et));
+        mUserBio = ((EditText) findViewById(R.id.et_about));
         mProfileImage = ((ImageView) findViewById(R.id.user_photo_img));
         setupToolbar();
         initProfileData();

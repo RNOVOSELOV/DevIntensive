@@ -44,6 +44,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .load(user.getPublicInfo().getPhoto())
                 .placeholder(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
                 .error(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
+                .fit()
                 .into(holder.mUserPhoto);
         holder.mFullName.setText(user.getName());
         holder.mRating.setText(String.valueOf(user.getProfileValues().getRait()));
