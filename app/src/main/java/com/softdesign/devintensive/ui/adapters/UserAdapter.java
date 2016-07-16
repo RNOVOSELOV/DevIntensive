@@ -27,7 +27,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     Context mContext;
     List<UserListRes.UserData> mUsers;
-    List<UserListRes.UserData> mFilteredList;
+    List<UserListRes.UserData> mFullList;
     UserViewHolder.CustomClickListener mCustomClickListener;
     private CustomFilter mFilter;
 
@@ -35,8 +35,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.mCustomClickListener = customClickListener;
-        mFilteredList = new ArrayList<>();
-        mFilteredList.addAll(mUsers);
+        mFullList = new ArrayList<>();
+        mFullList.addAll(mUsers);
         mFilter = new CustomFilter(UserAdapter.this);
     }
 
@@ -48,13 +48,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        UserListRes.UserData user = mFilteredList.get(position);
-        Picasso.with(mContext)
-                .load(user.getPublicInfo().getPhoto())
-                .placeholder(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
-                .error(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
-                .fit()
-                .into(holder.mUserPhoto);
+        UserListRes.UserData user = mUsers.get(position);
+        try {
+            Picasso.with(mContext)
+                    .load(user.getPublicInfo().getPhoto())
+                    .placeholder(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
+                    .error(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
+                    .fit()
+                    .into(holder.mUserPhoto);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         holder.mFullName.setText(user.getFullName());
         holder.mRating.setText(String.valueOf(user.getProfileValues().getRait()));
         holder.mCodeLines.setText(String.valueOf(user.getProfileValues().getLinesCode()));
@@ -70,7 +74,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public int getItemCount() {
-        return mFilteredList.size();
+        return mUsers.size();
     }
 
     @Override
@@ -133,21 +137,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            mFilteredList.clear();
+            mUsers.clear();
             final FilterResults results = new FilterResults();
             if (charSequence.length() == 0) {
-                mFilteredList.addAll(mUsers);
+                mUsers.addAll(mFullList);
             } else {
                 final String filterPattern = charSequence.toString().toLowerCase().trim();
-                for (final UserListRes.UserData data : mUsers) {
+                for (final UserListRes.UserData data : mFullList) {
                     if (data.getFirstName().toLowerCase().trim().startsWith(filterPattern) || data.getSecondName().toLowerCase().trim().startsWith(filterPattern)) {
-                        mFilteredList.add(data);
+                        mUsers.add(data);
                     }
                 }
             }
-            Log.d("TAG", String.valueOf(mFilteredList.size()));
-            results.values = mFilteredList;
-            results.count = mFilteredList.size();
+            results.values = mUsers;
+            results.count = mUsers.size();
             return results;
         }
 
