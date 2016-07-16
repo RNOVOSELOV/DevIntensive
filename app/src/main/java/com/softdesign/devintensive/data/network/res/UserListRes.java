@@ -64,7 +64,7 @@ public class UserListRes {
             return publicInfo;
         }
 
-        public String getFirstName() {
+        public String getName() {
             return firstName + " " + secondName;
         }
     }
@@ -136,6 +136,9 @@ public class UserListRes {
         @Expose
         private String title;
 
+        public String getRepoAddress() {
+            return git;
+        }
     }
 
     public class Repositories {
@@ -147,5 +150,8 @@ public class UserListRes {
         @Expose
         private String updated;
 
+        public List<Repo> getRepo() {
+            return repo;
+        }
     }
 }

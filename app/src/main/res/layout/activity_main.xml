@@ -94,7 +94,7 @@
             android:background="@color/grey"
             android:gravity="center"
             android:orientation="horizontal"
-            app:layout_behavior=".ui.view.behaviors.StatisticPanelBehavior"
+            app:layout_behavior=".ui.behaviors.StatisticPanelBehavior"
             app:behaviour_max_padding="@dimen/padding_large_24">
 
             <LinearLayout
@@ -164,7 +164,7 @@
             android:id="@+id/nested_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior=".ui.view.behaviors.NestedScrollBehavior">
+            app:layout_behavior=".ui.behaviors.NestedScrollBehavior">
 
             <include layout="@layout/user_profile_layout" />
 
