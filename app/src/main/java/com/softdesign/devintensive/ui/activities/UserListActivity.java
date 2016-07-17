@@ -41,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener {
+public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener, RetainedFragment.NetworkRequestListener {
 
     private static String TAG = ConstantManager.TAG_PREFIX + " UserListActivity";
 
@@ -82,12 +82,36 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
         fragmentManager = getFragmentManager();
         dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
         if (dataFragment == null) {
-            loadUsers();
+            dataFragment = new RetainedFragment();
+            fragmentManager.beginTransaction().add(dataFragment, "user_data").commit();
+            showProgress();
+            try {
+                dataFragment.loadUsers();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         } else {
             mUsers = dataFragment.getData();
             createAdapter();
         }
+    }
 
+    @Override
+    public void onDataReceived(int responseCode, List<UserListRes.UserData> data) {
+        hideProgress();
+        if (responseCode == 200) {
+            mUsers = data;
+            createAdapter ();
+        } else if (responseCode == 401) {
+            Intent intent = new Intent(UserListActivity.this, AuthActivity.class);
+            intent.putExtra(ConstantManager.USER_AUTORIZATION_FAILED, true);
+            startActivity(intent);
+            ActivityCompat.finishAfterTransition(UserListActivity.this);
+        } else if (responseCode == ConstantManager.REST_API_FAILURE_RESPONSE_CODE) {
+            showSnackBar("Ошибка загрузки, попробуйте позже");
+        } else {
+            showSnackBar("Видимо что-то случилось");
+        }
     }
 
     @Override
@@ -111,43 +135,6 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
 
     private void showSnackBar(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void loadUsers() {
-        Call<UserListRes> call = mDataManager.getUsersList();
-        showProgress();
-        call.enqueue(new Callback<UserListRes>() {
-            @Override
-            public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
-                hideProgress();
-                if (response.code() == 200) {
-                    try {
-                        mUsers = response.body().getData();
-                        createAdapter ();
-
-                        dataFragment = new RetainedFragment();
-                        fragmentManager.beginTransaction().add(dataFragment, "user_data").commit();
-                        dataFragment.setData(mUsers);
-
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                } else if (response.code() == 401) {
-                    Intent intent = new Intent(UserListActivity.this, AuthActivity.class);
-                    intent.putExtra(ConstantManager.USER_AUTORIZATION_FAILED, true);
-                    startActivity(intent);
-                    ActivityCompat.finishAfterTransition(UserListActivity.this);
-                } else {
-                    showSnackBar("Видимо что-то случилось");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserListRes> call, Throwable t) {
-                showSnackBar("Ошибка загрузки, попробуйте позже");
-                hideProgress();
-            }
-        });
     }
 
     private void createAdapter() {
@@ -227,5 +214,4 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
         mUserAdapter.getFilter().filter(newText);
         return true;
     }
-
 }

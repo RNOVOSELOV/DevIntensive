@@ -37,4 +37,5 @@ public interface ConstantManager {
 
     String AUTH_CURRENT_LOGIN = "AUTH_CURRENT_LOGIN";
     String AUTH_AUTO_LOGIN_FLAG = "AUTH_AUTOLOGIN_FLAG";
+    int REST_API_FAILURE_RESPONSE_CODE = 0;
 }
