@@ -1,6 +1,5 @@
 package com.softdesign.devintensive.utils;
 
-import android.app.AlertDialog;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;

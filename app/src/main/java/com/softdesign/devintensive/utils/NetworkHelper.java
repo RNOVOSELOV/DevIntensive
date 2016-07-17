@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 /**
  * Created by roman on 12.07.16.
  */
-public class NetworkStatusChecker {
+public class NetworkHelper {
 
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));

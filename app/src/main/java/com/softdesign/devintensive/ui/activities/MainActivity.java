@@ -41,13 +41,11 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.res.UploadProfilePhotoRes;
-import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.utils.AppUtils;
 import com.softdesign.devintensive.utils.ConstantManager;
-import com.softdesign.devintensive.utils.NetworkStatusChecker;
+import com.softdesign.devintensive.utils.NetworkHelper;
 import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
 import com.softdesign.devintensive.utils.RoundedTransformation;
-import com.squareup.picasso.LruCache;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -66,7 +64,6 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MainActivity extends BaseActivity {
 
@@ -144,7 +141,7 @@ public class MainActivity extends BaseActivity {
 
         Picasso.with(this)
                 .load(DataManager.getInstance().getPreferenceManager().loadUserPhoto())
-                .placeholder(R.drawable.collapsing_photo)
+                .placeholder(R.drawable.user_bg)
                 .resize(width, getResources().getDimensionPixelOffset(R.dimen.size_profile_image))
                 .centerCrop()
                 .into(mProfileImage);
@@ -609,7 +606,7 @@ public class MainActivity extends BaseActivity {
             mUserInfoList.get(PROFILE_ET_PHONE_POSITION).setSelection(mUserInfoList.get(PROFILE_ET_PHONE_POSITION).getText().length());
         } else if (mPhotoIsChanged){
             mPhotoIsChanged = false;
-            if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            if (NetworkHelper.isNetworkAvailable(this)) {
                 Call<UploadProfilePhotoRes> call = DataManager.getInstance().uploadPhoto(DataManager.getInstance().getPreferenceManager().getUserId(), mPhotoFile);
                 call.enqueue(new Callback<UploadProfilePhotoRes>() {
                     @Override

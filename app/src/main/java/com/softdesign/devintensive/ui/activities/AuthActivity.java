@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.softdesign.devintensive.R;
@@ -15,7 +15,7 @@ import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.utils.ConstantManager;
-import com.softdesign.devintensive.utils.NetworkStatusChecker;
+import com.softdesign.devintensive.utils.NetworkHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,16 +35,27 @@ public class AuthActivity extends BaseActivity {
     EditText mLogin;
     @BindView(R.id.auth_et_password)
     EditText mPassword;
+    @BindView(R.id.auth_chb_save_login)
+    CheckBox saveLoginCheckBox;
 
-    boolean isTokenFailed;
+    boolean isTokenFailed;  // FALSE, если в процессе работы токен аутотентификации стал не валидным
+    // пользователя выкидывает на активити авторизации, появляется соответствующее сообщение
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+        ButterKnife.bind(this);
+
         Intent intent = getIntent();
         isTokenFailed = intent.getBooleanExtra(ConstantManager.USER_AUTORIZATION_FAILED, false);
-        ButterKnife.bind(this);
+
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
+        boolean isLoginSaved = preferencesManager.isLoginSaved();
+        saveLoginCheckBox.setChecked(isLoginSaved);
+        if (isLoginSaved) {
+            mLogin.setText(preferencesManager.getLogin());
+        }
     }
 
     @Override
@@ -56,11 +67,17 @@ public class AuthActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Метод обрабатывает клик по {@link android.widget.TextView} "Забыли пароль?"
+     */
     @OnClick(R.id.auth_tv_remember)
     public void onRememberPasswordClicked() {
         rememberPassword();
     }
 
+    /**
+     * Метод обрабатывает клик по кнопке "Войти"
+     */
     @OnClick(R.id.auth_login_button)
     public void onSignInClicked() {
         signIn();
@@ -68,6 +85,7 @@ public class AuthActivity extends BaseActivity {
 
     /**
      * Метод вызывает всплывающее сообщение в {@link Snackbar}
+     *
      * @param message текст сообщения
      */
     private void showSnackBar(String message) {
@@ -84,11 +102,21 @@ public class AuthActivity extends BaseActivity {
 
     /**
      * Метод выполняется при удачном выполнении запроса к API
+     *
      * @param response ответ сервера
      */
     private void loginSuccess(UserModelRes response) {
-        DataManager.getInstance().getPreferenceManager().saveAuthToken(response.getData().getToken());
-        DataManager.getInstance().getPreferenceManager().saveUserId(response.getData().getUser().getId());
+        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
+        preferencesManager.saveAuthToken(response.getData().getToken());
+        preferencesManager.saveUserId(response.getData().getUser().getId());
+
+        if (saveLoginCheckBox.isChecked()) {
+            preferencesManager.setLoginSavedFlag(true);
+            preferencesManager.saveLogin(mLogin.getText().toString());
+        } else {
+            preferencesManager.setLoginSavedFlag(false);
+            preferencesManager.saveLogin();                     // Затираем логин в SP, если флаг сохранения не стоит
+        }
 
         saveUserValues(response);
         saveUserProfileValues(response);
@@ -98,10 +126,10 @@ public class AuthActivity extends BaseActivity {
     }
 
     /**
-     * Метод выполняет запрос на получение токена и информации о пользователе
+     * Метод выполняет запрос к REST API на получение токена и информации о пользователе
      */
     private void signIn() {
-        if (NetworkStatusChecker.isNetworkAvailable(this)) {
+        if (NetworkHelper.isNetworkAvailable(this)) {
             showProgress();
 
             Call<UserModelRes> call = DataManager.getInstance().loginUser(new UserLoginReq(mLogin.getText().toString(), mPassword.getText().toString()));

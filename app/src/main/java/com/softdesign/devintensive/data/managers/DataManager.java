@@ -1,6 +1,5 @@
 package com.softdesign.devintensive.data.managers;
 
-import android.content.ContentValues;
 import android.content.Context;
 
 import com.softdesign.devintensive.data.network.RestService;
@@ -17,8 +16,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
 /**
  * Класс-синглтон для работы с менеджерами данных
@@ -55,17 +52,36 @@ public class DataManager {
 
     // region ============== NETWORK ==============
 
+    /**
+     * Метод аутентификации
+     *
+     * @param userLoginReq POJO класс {@link UserLoginReq}, хранящий параметры для аутотентификации (логин и пароль)
+     * @return модельный класс типа {@link UserModelRes} хранящий токен авторизации
+     * и информацию о зарегистрированном пользователе
+     */
     public Call<UserModelRes> loginUser(UserLoginReq userLoginReq) {
         return mRestService.loginUser(userLoginReq);
     }
 
+    /**
+     * Метод загрузки фотографии профиля на сервер
+     *
+     * @param userId    идентификатор пользователя, типа {@link String}, для которого загружается фото профиля
+     * @param photoFile параметр типа {@link File} - новая фотография пользователя
+     * @return модельный класс типа {@link UploadProfilePhotoRes}
+     */
     public Call<UploadProfilePhotoRes> uploadPhoto(String userId, File photoFile) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), photoFile);
         MultipartBody.Part body = MultipartBody.Part.createFormData("photo", photoFile.getName(), requestFile);
         return mRestService.uploadPhoto(userId, body);
     }
 
-    public Call<UserListRes> getUsersList () {
+    /**
+     * Метод получения списка пользователей с сервера
+     *
+     * @return модельный класс типа {@link UserListRes}, хранящий информацию о зарегистрированных пользователях
+     */
+    public Call<UserListRes> getUsersList() {
         return mRestService.getUserList();
     }
     // endregion
