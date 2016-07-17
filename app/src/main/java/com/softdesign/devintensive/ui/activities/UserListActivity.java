@@ -86,7 +86,7 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
             fragmentManager.beginTransaction().add(dataFragment, "user_data").commit();
             showProgress();
             try {
-                dataFragment.loadUsers();
+                dataFragment.loadUsers(this);
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }

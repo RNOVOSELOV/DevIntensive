@@ -19,7 +19,6 @@ import retrofit2.Response;
 public class RetainedFragment extends Fragment {
 
     private List<UserListRes.UserData> mData;
-    private NetworkRequestListener mListener;
 
     public interface NetworkRequestListener {
         void onDataReceived(int responseCode, List<UserListRes.UserData> data);
@@ -34,20 +33,9 @@ public class RetainedFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof NetworkRequestListener) {
-            mListener = (NetworkRequestListener) context;
-        } else {
-            throw new IllegalStateException("Parent activity must implement NetworkRequestListener");
-        }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public void loadUsers() {
+    public void loadUsers(final NetworkRequestListener listener) {
         Call<UserListRes> call = DataManager.getInstance().getUsersList();
         call.enqueue(new Callback<UserListRes>() {
             @Override
@@ -55,11 +43,11 @@ public class RetainedFragment extends Fragment {
                 try {
                     if (response.code() == 200) {
                         mData = response.body().getData();
-                        mListener.onDataReceived(response.code(), mData);
+                        listener.onDataReceived(response.code(), mData);
                     } else if (response.code() == 401) {
-                        mListener.onDataReceived(response.code(), null);
+                        listener.onDataReceived(response.code(), null);
                     } else {
-                        mListener.onDataReceived(response.code(), null);
+                        listener.onDataReceived(response.code(), null);
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -69,7 +57,7 @@ public class RetainedFragment extends Fragment {
             @Override
             public void onFailure(Call<UserListRes> call, Throwable t) {
                 try {
-                    mListener.onDataReceived(0, null);
+                    listener.onDataReceived(0, null);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
