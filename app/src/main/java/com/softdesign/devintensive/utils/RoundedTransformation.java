@@ -6,9 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 /**
- * Created by roman on 12.07.16.
+ * Класс реализует интерфейс {@link com.squareup.picasso.Transformation} для преобразования аватара
+ * пользователя в круглый вид
  */
 public class RoundedTransformation implements com.squareup.picasso.Transformation {
+
+    /**
+     * Метод преобразует {@link Bitmap} из квадратного в круглый
+     *
+     * @param source исходный {@link Bitmap}
+     * @return преобразованный {@link Bitmap}
+     */
     @Override
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -29,13 +37,18 @@ public class RoundedTransformation implements com.squareup.picasso.Transformatio
         paint.setShader(shader);
         paint.setAntiAlias(true);
 
-        float r = size/2f;
+        float r = size / 2f;
         canvas.drawCircle(r, r, r, paint);
 
         squaredBitmap.recycle();
         return bitmap;
     }
 
+    /**
+     * Возвращает уникальный для трансформации ключ, который используется в дальнейшем для кеширования.
+     *
+     * @return
+     */
     @Override
     public String key() {
         return "circle";

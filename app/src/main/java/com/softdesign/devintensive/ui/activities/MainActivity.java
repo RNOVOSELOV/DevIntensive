@@ -426,7 +426,7 @@ public class MainActivity extends BaseActivity {
             ActivityCompat.requestPermissions(this, new String[]{
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
             }, ConstantManager.GALLERY_REQUEST_PERMISSION_CODE);
-            Snackbar.make(mCoordinatorLayout, R.string.satring_need_permissions, Snackbar.LENGTH_LONG)
+            Snackbar.make(mCoordinatorLayout, R.string.string_need_permissions, Snackbar.LENGTH_LONG)
                     .setAction(R.string.string_allow, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -457,7 +457,7 @@ public class MainActivity extends BaseActivity {
                     android.Manifest.permission.CAMERA,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, ConstantManager.CAMERA_REQUEST_PERMISSION_CODE);
-            Snackbar.make(mCoordinatorLayout, R.string.satring_need_permissions, Snackbar.LENGTH_LONG)
+            Snackbar.make(mCoordinatorLayout, R.string.string_need_permissions, Snackbar.LENGTH_LONG)
                     .setAction(R.string.string_allow, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

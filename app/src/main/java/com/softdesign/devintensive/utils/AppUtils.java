@@ -12,6 +12,11 @@ import com.squareup.picasso.Picasso;
  */
 public class AppUtils {
 
+    /**
+     * Метод возвращает путь до файла в фаловой системе по его {@link Uri}
+     * @param uri {@link Uri} файла
+     * @return значение типа {@link String} - путь до файла
+     */
     public static String getPathByUri(Uri uri) {
         String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = DataManager.getInstance().getContext().getContentResolver().query(uri, projection, null, null, null);

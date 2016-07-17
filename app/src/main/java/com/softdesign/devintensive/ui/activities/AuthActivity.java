@@ -136,6 +136,7 @@ public class AuthActivity extends BaseActivity {
             call.enqueue(new Callback<UserModelRes>() {
                 @Override
                 public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
+                    hideProgress();
                     if (response.code() == 200) {
                         try {
                             loginSuccess(response.body());
@@ -147,7 +148,6 @@ public class AuthActivity extends BaseActivity {
                     } else {
                         showSnackBar("Видимо что-то случилось");
                     }
-                    hideProgress();
                 }
 
                 @Override
