@@ -41,13 +41,11 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.res.UploadProfilePhotoRes;
-import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.utils.AppUtils;
 import com.softdesign.devintensive.utils.ConstantManager;
-import com.softdesign.devintensive.utils.NetworkStatusChecker;
+import com.softdesign.devintensive.utils.NetworkHelper;
 import com.softdesign.devintensive.utils.ProfileDataTextWatcher;
 import com.softdesign.devintensive.utils.RoundedTransformation;
-import com.squareup.picasso.LruCache;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -66,7 +64,6 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MainActivity extends BaseActivity {
 
@@ -144,7 +141,7 @@ public class MainActivity extends BaseActivity {
 
         Picasso.with(this)
                 .load(DataManager.getInstance().getPreferenceManager().loadUserPhoto())
-                .placeholder(R.drawable.collapsing_photo)
+                .placeholder(R.drawable.user_bg)
                 .resize(width, getResources().getDimensionPixelOffset(R.dimen.size_profile_image))
                 .centerCrop()
                 .into(mProfileImage);
@@ -353,7 +350,18 @@ public class MainActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                showSnackBar(item.getTitle().toString());
+                switch (item.getItemId()) {
+                    case R.id.user_profile_menu:
+                        Intent intentProfile = new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(intentProfile);
+                        ActivityCompat.finishAfterTransition(MainActivity.this);
+                        break;
+                    case R.id.team_menu:
+                        Intent intentTeam = new Intent(MainActivity.this, UserListActivity.class);
+                        startActivity(intentTeam);
+                        ActivityCompat.finishAfterTransition(MainActivity.this);
+                        break;
+                }
                 item.setChecked(true);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 return false;
@@ -418,7 +426,7 @@ public class MainActivity extends BaseActivity {
             ActivityCompat.requestPermissions(this, new String[]{
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
             }, ConstantManager.GALLERY_REQUEST_PERMISSION_CODE);
-            Snackbar.make(mCoordinatorLayout, R.string.satring_need_permissions, Snackbar.LENGTH_LONG)
+            Snackbar.make(mCoordinatorLayout, R.string.string_need_permissions, Snackbar.LENGTH_LONG)
                     .setAction(R.string.string_allow, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -449,7 +457,7 @@ public class MainActivity extends BaseActivity {
                     android.Manifest.permission.CAMERA,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, ConstantManager.CAMERA_REQUEST_PERMISSION_CODE);
-            Snackbar.make(mCoordinatorLayout, R.string.satring_need_permissions, Snackbar.LENGTH_LONG)
+            Snackbar.make(mCoordinatorLayout, R.string.string_need_permissions, Snackbar.LENGTH_LONG)
                     .setAction(R.string.string_allow, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -598,7 +606,7 @@ public class MainActivity extends BaseActivity {
             mUserInfoList.get(PROFILE_ET_PHONE_POSITION).setSelection(mUserInfoList.get(PROFILE_ET_PHONE_POSITION).getText().length());
         } else if (mPhotoIsChanged){
             mPhotoIsChanged = false;
-            if (NetworkStatusChecker.isNetworkAvailable(this)) {
+            if (NetworkHelper.isNetworkAvailable(this)) {
                 Call<UploadProfilePhotoRes> call = DataManager.getInstance().uploadPhoto(DataManager.getInstance().getPreferenceManager().getUserId(), mPhotoFile);
                 call.enqueue(new Callback<UploadProfilePhotoRes>() {
                     @Override

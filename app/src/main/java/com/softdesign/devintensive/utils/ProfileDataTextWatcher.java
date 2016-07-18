@@ -1,6 +1,5 @@
 package com.softdesign.devintensive.utils;
 
-import android.app.AlertDialog;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,7 +10,8 @@ import com.softdesign.devintensive.data.managers.DataManager;
 import java.util.regex.Pattern;
 
 /**
- * Created by roman on 09.07.16.
+ * Класс реализует интерфейс {@link TextWatcher}
+ * Используется для сверки введенных в поля информации о пользователе данных с RegExp паттерном
  */
 public class ProfileDataTextWatcher implements TextWatcher {
 

@@ -18,8 +18,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:fitsSystemWindows="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/login_bg" />
 
         <android.support.v7.widget.CardView
@@ -95,6 +95,15 @@
                             android:inputType="textPassword" />
 
                     </android.support.design.widget.TextInputLayout>
+
+                    <CheckBox
+                        android:id="@+id/auth_chb_save_login"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-regular"
+                        android:text="@string/auth_layout_save_login_cb"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/font_normal_14" />
 
                     <Button
                         android:id="@+id/auth_login_button"

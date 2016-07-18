@@ -1,7 +1,6 @@
 package com.softdesign.devintensive.utils;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.TypedValue;
 
 import com.softdesign.devintensive.data.managers.DataManager;
@@ -11,6 +10,10 @@ import com.softdesign.devintensive.data.managers.DataManager;
  */
 public class UiHelper {
 
+    /**
+     * Метод определния высоты Status Bar
+     * @return высота статус бара в пикселях
+     */
     public static int getStatusBarHeight() {
         Context context = DataManager.getInstance().getContext();
         int statusBarHeight = 0;
@@ -21,6 +24,10 @@ public class UiHelper {
         return statusBarHeight;
     }
 
+    /**
+     * Метод определения высоты Action Bar
+     * @return высота {@link android.support.v7.app.ActionBar} в пикселях
+     */
     public static int getActionBarHeight() {
         Context context = DataManager.getInstance().getContext();
         int actionBarHeight = 0;
@@ -44,7 +51,7 @@ public class UiHelper {
     }
 
     /**
-     * Метод подсчитвает на сколько сжался элемент относитоельно максимально возможной высоты
+     * Метод подсчитвает на сколько сжался элемент в долях относитоельно максимально возможной высоты
      * @param start минимальный размер
      * @param end максимальный размер
      * @param currentValue текущий размер

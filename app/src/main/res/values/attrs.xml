@@ -3,4 +3,7 @@
     <declare-styleable name="StatisticPanelBehavior">
         <attr name="behaviour_max_padding" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="AspectRatioImageView">
+        <attr name="aspect_ratio" format="float" />
+    </declare-styleable>
 </resources>
