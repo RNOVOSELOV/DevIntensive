@@ -57,15 +57,12 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
     RecyclerView mRecyclerView;
 
     private DataManager mDataManager;
-    private UserAdapter mUserAdapter;
     private List<User> mUsers;
 
-    private List<User> mUsersFromDb;
-
     private RetainedFragment dataFragment;
-    private FragmentManager fragmentManager;
     private String mQuery;
     private Handler mHandler;
+    private Runnable searchUsers;
 
     @Override
 
@@ -82,7 +79,13 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
         setupToolbar();
         setupDrawer();
         mHandler = new Handler();
-        fragmentManager = getFragmentManager();
+        searchUsers = new Runnable() {
+            @Override
+            public void run() {
+                createAdapter(mDataManager.getUserListByName(mQuery));
+            }
+        };
+        FragmentManager fragmentManager = getFragmentManager();
         dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
         if (dataFragment == null) {
             dataFragment = new RetainedFragment();
@@ -153,16 +156,12 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
 
     private void showUserByQuery(String query) {
         mQuery = query;
-
-        Runnable searchUsers = new Runnable() {
-            @Override
-            public void run() {
-                createAdapter(mDataManager.getUserListByName(mQuery));
-            }
-        };
-
         mHandler.removeCallbacks(searchUsers);
-        mHandler.postDelayed(searchUsers, AppConfig.SEARCH_DELAY);
+        if (query.isEmpty()) {
+            createAdapter(dataFragment.getData());
+        } else {
+            mHandler.postDelayed(searchUsers, AppConfig.SEARCH_DELAY);
+        }
     }
 
     @Override
@@ -179,7 +178,7 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
 
     private void createAdapter(List<User> users) {
         mUsers = users;
-        mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
+        UserAdapter mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
             @Override
             public void onUserItemClickListener(int position) {
                 UserDto user = new UserDto(mUsers.get(position));

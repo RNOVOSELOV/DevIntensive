@@ -1,14 +1,11 @@
 package com.softdesign.devintensive.ui.activities;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -27,31 +24,35 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ProfileUserActivity extends BaseActivity {
 
-    private Toolbar mToolbar;
-    private ImageView mProfileImage;
-    private EditText mUserBio;
-    private TextView mRaiting;
-    private TextView mCodeLines;
-    private TextView mProjects;
-    private ListView mRepoList;
-    private CollapsingToolbarLayout mCollapsingToolbar;
-    private CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.user_photo_img)
+    ImageView mProfileImage;
+    @BindView(R.id.et_about)
+    EditText mUserBio;
+    @BindView(R.id.main_tv_raiting)
+    TextView mRaiting;
+    @BindView(R.id.main_tv_code_lines)
+    TextView mCodeLines;
+    @BindView(R.id.main_tv_projects)
+    TextView mProjects;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbar;
+    @BindView(R.id.main_coordinator_container)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.repositories_list)
+    ListView mRepoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_user);
-        mToolbar = ((Toolbar) findViewById(R.id.toolbar));
-        mCollapsingToolbar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar));
-        mRepoList = ((ListView) findViewById(R.id.repositories_list));
-        mProjects = ((TextView) findViewById(R.id.main_tv_projects));
-        mCodeLines = ((TextView) findViewById(R.id.main_tv_code_lines));
-        mRaiting = ((TextView) findViewById(R.id.main_tv_raiting));
-        mUserBio = ((EditText) findViewById(R.id.et_about));
-        mProfileImage = ((ImageView) findViewById(R.id.user_photo_img));
-        mCoordinatorLayout = ((CoordinatorLayout) findViewById(R.id.main_coordinator_container));
+        ButterKnife.bind(this);
         setupToolbar();
         initProfileData();
     }
