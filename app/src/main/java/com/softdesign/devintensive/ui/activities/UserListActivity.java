@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebViewFragment;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +24,7 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.res.UserListRes;
+import com.softdesign.devintensive.data.storage.model.User;
 import com.softdesign.devintensive.data.storage.model.UserDto;
 import com.softdesign.devintensive.ui.adapters.UserAdapter;
 import com.softdesign.devintensive.ui.fragments.RetainedFragment;
@@ -37,11 +36,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener, RetainedFragment.NetworkRequestListener {
+public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener, RetainedFragment.DataRequestListener {
 
     private static String TAG = ConstantManager.TAG_PREFIX + " UserListActivity";
 
@@ -59,7 +55,9 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
 
     private DataManager mDataManager;
     private UserAdapter mUserAdapter;
-    private List<UserListRes.UserData> mUsers;
+    private List<User> mUsers;
+
+    private List<User> mUsersFromDb;
 
     private RetainedFragment dataFragment;
     private FragmentManager fragmentManager;
@@ -86,7 +84,7 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
             fragmentManager.beginTransaction().add(dataFragment, "user_data").commit();
             showProgress();
             try {
-                dataFragment.loadUsers(this);
+                dataFragment.loadUsersFromDb(this);
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -96,6 +94,19 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
         }
     }
 
+
+    @Override
+    public void onDataReceived(List<User> data) {
+        mUsers = data;
+        hideProgress();
+        if (mUsers.size() > 0) {
+            createAdapter();
+        } else {
+            showSnackBar("Список пользователей не может быть загружен");
+        }
+    }
+
+/*
     @Override
     public void onDataReceived(int responseCode, List<UserListRes.UserData> data) {
         hideProgress();
@@ -113,7 +124,7 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
             showSnackBar("Видимо что-то случилось");
         }
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);

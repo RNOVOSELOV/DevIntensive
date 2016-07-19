@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.res.UserListRes;
+import com.softdesign.devintensive.data.storage.model.User;
 
 import java.util.List;
 
@@ -18,10 +19,11 @@ import retrofit2.Response;
  */
 public class RetainedFragment extends Fragment {
 
-    private List<UserListRes.UserData> mData;
+    private List<User> mData;
 
-    public interface NetworkRequestListener {
-        void onDataReceived(int responseCode, List<UserListRes.UserData> data);
+    public interface DataRequestListener {
+//        void onDataReceived(int responseCode, List<UserListRes.UserData> data);
+        void onDataReceived(List<User> data);
     }
 
     @Override
@@ -35,7 +37,12 @@ public class RetainedFragment extends Fragment {
         super.onAttach(context);
     }
 
-    public void loadUsers(final NetworkRequestListener listener) {
+    public void loadUsersFromDb(final DataRequestListener listener) {
+        mData = DataManager.getInstance().getUsersListFromDb();
+        listener.onDataReceived(mData);
+    }
+
+/*    public void loadUsers(final DataRequestListener listener) {
         Call<UserListRes> call = DataManager.getInstance().getUsersListFromNetwork();
         call.enqueue(new Callback<UserListRes>() {
             @Override
@@ -64,8 +71,9 @@ public class RetainedFragment extends Fragment {
             }
         });
     }
+    */
 
-    public List<UserListRes.UserData> getData() {
+    public List<User> getData() {
         return mData;
     }
 }

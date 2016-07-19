@@ -3,8 +3,6 @@ package com.softdesign.devintensive.data.storage.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.softdesign.devintensive.data.network.res.UserListRes;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,17 +18,17 @@ public class UserDto implements Parcelable {
     private String mBio;
     private List<String> mRepositories;
 
-    public UserDto(UserListRes.UserData userData) {
-        this.mPhoto = userData.getPublicInfo().getPhoto();
+    public UserDto(User userData) {
+        this.mPhoto = userData.getPhoto();
         this.mFullName = userData.getFullName();
-        this.mRating = String.valueOf(userData.getProfileValues().getRait());
-        this.mCodeLines = String.valueOf(userData.getProfileValues().getLinesCode());
-        this.mProjects = String.valueOf(userData.getProfileValues().getProjects());
-        this.mBio = userData.getPublicInfo().getBio();
+        this.mRating = String.valueOf(userData.getRating());
+        this.mCodeLines = String.valueOf(userData.getCodeLines());
+        this.mProjects = String.valueOf(userData.getProjects());
+        this.mBio = userData.getBio();
 
         mRepositories = new ArrayList<>();
-        for (UserListRes.Repo repo : userData.getRepositories().getRepo()) {
-            mRepositories.add(repo.getGit());
+        for (Repository repo : userData.getRepositories()) {
+            mRepositories.add(repo.getRepositoryName());
         }
     }
 

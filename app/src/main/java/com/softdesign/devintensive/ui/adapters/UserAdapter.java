@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.res.UserListRes;
+import com.softdesign.devintensive.data.storage.model.User;
 import com.softdesign.devintensive.ui.views.AspectRatioImageView;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.squareup.picasso.Callback;
@@ -31,12 +32,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private static final String TAG = ConstantManager.TAG_PREFIX + " UserAdapter";
     Context mContext;
-    List<UserListRes.UserData> mUsers;
-    List<UserListRes.UserData> mFullList;
+    List<User> mUsers;
+    List<User> mFullList;
     UserViewHolder.CustomClickListener mCustomClickListener;
     private CustomFilter mFilter;
 
-    public UserAdapter(Context mContext, List<UserListRes.UserData> mUsers, UserViewHolder.CustomClickListener customClickListener) {
+    public UserAdapter(Context mContext, List<User> mUsers, UserViewHolder.CustomClickListener customClickListener) {
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.mCustomClickListener = customClickListener;
@@ -53,14 +54,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(final UserViewHolder holder, int position) {
-        final UserListRes.UserData user = mUsers.get(position);
+        final User user = mUsers.get(position);
         final String userPhoto;
 
-        if (user.getPublicInfo().getPhoto().isEmpty()) {
+        if (user.getPhoto().isEmpty()) {
             userPhoto = "null";
             Log.e(TAG, "onBindViewHolder: user with name " + user.getFullName() + " has empty name");
         } else {
-            userPhoto = user.getPublicInfo().getPhoto();
+            userPhoto = user.getPhoto();
         }
 
         try {
@@ -102,14 +103,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             e.printStackTrace();
         }
         holder.mFullName.setText(user.getFullName());
-        holder.mRating.setText(String.valueOf(user.getProfileValues().getRait()));
-        holder.mCodeLines.setText(String.valueOf(user.getProfileValues().getLinesCode()));
-        holder.mProjects.setText(String.valueOf(user.getProfileValues().getProjects()));
+        holder.mRating.setText(String.valueOf(user.getRating()));
+        holder.mCodeLines.setText(String.valueOf(user.getCodeLines()));
+        holder.mProjects.setText(String.valueOf(user.getProjects()));
 
-        if (user.getPublicInfo().getBio() == null || user.getPublicInfo().getBio().isEmpty()) {
+        if (user.getBio() == null || user.getBio().isEmpty()) {
             holder.mBio.setVisibility(View.GONE);
         } else {
-            holder.mBio.setText(user.getPublicInfo().getBio());
+            holder.mBio.setText(user.getBio());
             holder.mBio.setVisibility(View.VISIBLE);
         }
     }
@@ -187,8 +188,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 mUsers.addAll(mFullList);
             } else {
                 final String filterPattern = charSequence.toString().toLowerCase().trim();
-                for (final UserListRes.UserData data : mFullList) {
-                    if (data.getFirstName().toLowerCase().trim().startsWith(filterPattern) || data.getSecondName().toLowerCase().trim().startsWith(filterPattern)) {
+                for (final User data : mFullList) {
+                    if (data.getFullName().toLowerCase().trim().contains(filterPattern.toLowerCase().trim())) {
                         mUsers.add(data);
                     }
                 }

@@ -11,6 +11,7 @@ import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.data.storage.model.DaoSession;
 import com.softdesign.devintensive.data.storage.model.User;
+import com.softdesign.devintensive.data.storage.model.UserDao;
 import com.softdesign.devintensive.utils.DevIntensiveApplication;
 import com.squareup.picasso.Picasso;
 
@@ -109,8 +110,17 @@ public class DataManager {
     }
 
     public List<User> getUsersListFromDb () {
-        List<User> temp = new ArrayList<>();
-        return temp;
+        List<User> userList = new ArrayList<>();
+        try {
+            userList = mDaoSession.queryBuilder(User.class)
+                    .where(UserDao.Properties.CodeLines.gt(0))
+                    .orderDesc(UserDao.Properties.CodeLines)
+                    .build()
+                    .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userList;
     }
 
     // endregion
