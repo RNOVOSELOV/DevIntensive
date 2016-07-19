@@ -3,6 +3,7 @@ package com.softdesign.devintensive.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -13,7 +14,13 @@ import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.data.storage.model.Repository;
+import com.softdesign.devintensive.data.storage.model.RepositoryDao;
+import com.softdesign.devintensive.data.storage.model.User;
+import com.softdesign.devintensive.data.storage.model.UserDao;
+import com.softdesign.devintensive.utils.AppConfig;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.NetworkHelper;
 
@@ -38,6 +45,10 @@ public class AuthActivity extends BaseActivity {
     @BindView(R.id.auth_chb_save_login)
     CheckBox saveLoginCheckBox;
 
+    private DataManager mDataManager;
+    private RepositoryDao mRepositoryDao;
+    private UserDao mUserDao;
+
     boolean isTokenFailed;  // FALSE, если в процессе работы токен аутотентификации стал не валидным
     // пользователя выкидывает на активити авторизации, появляется соответствующее сообщение
 
@@ -47,10 +58,14 @@ public class AuthActivity extends BaseActivity {
         setContentView(R.layout.activity_auth);
         ButterKnife.bind(this);
 
+        mDataManager = DataManager.getInstance();
+        mUserDao = mDataManager.getDaoSession().getUserDao();
+        mRepositoryDao = mDataManager.getDaoSession().getRepositoryDao();
+
         Intent intent = getIntent();
         isTokenFailed = intent.getBooleanExtra(ConstantManager.USER_AUTORIZATION_FAILED, false);
 
-        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
+        PreferencesManager preferencesManager = mDataManager.getPreferenceManager();
         boolean isLoginSaved = preferencesManager.isLoginSaved();
         saveLoginCheckBox.setChecked(isLoginSaved);
         if (isLoginSaved) {
@@ -106,7 +121,7 @@ public class AuthActivity extends BaseActivity {
      * @param response ответ сервера
      */
     private void loginSuccess(UserModelRes response) {
-        PreferencesManager preferencesManager = DataManager.getInstance().getPreferenceManager();
+        PreferencesManager preferencesManager = mDataManager.getPreferenceManager();
         preferencesManager.saveAuthToken(response.getData().getToken());
         preferencesManager.saveUserId(response.getData().getUser().getId());
 
@@ -120,9 +135,18 @@ public class AuthActivity extends BaseActivity {
 
         saveUserValues(response);
         saveUserProfileValues(response);
-        Intent loginIntent = new Intent(this, MainActivity.class);
-        startActivity(loginIntent);
-        ActivityCompat.finishAfterTransition(this);
+        saveUsersInDb();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AuthActivity.this.hideProgress();
+                Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
+                startActivity(loginIntent);
+                ActivityCompat.finishAfterTransition(AuthActivity.this);
+            }
+        }, AppConfig.START_DELAY);
     }
 
     /**
@@ -136,16 +160,18 @@ public class AuthActivity extends BaseActivity {
             call.enqueue(new Callback<UserModelRes>() {
                 @Override
                 public void onResponse(Call<UserModelRes> call, Response<UserModelRes> response) {
-                    hideProgress();
                     if (response.code() == 200) {
                         try {
                             loginSuccess(response.body());
                         } catch (NullPointerException e) {
+                            hideProgress();
                             e.printStackTrace();
                         }
                     } else if (response.code() == 404) {
+                        hideProgress();
                         showSnackBar("Неверный логин или пароль");
                     } else {
+                        hideProgress();
                         showSnackBar("Видимо что-то случилось");
                     }
                 }
@@ -198,5 +224,50 @@ public class AuthActivity extends BaseActivity {
         userData.add(userModelRes.getData().getUser().getRepositories().getRepo().get(0).getGit());
         userData.add(userModelRes.getData().getUser().getPublicInfo().getBio());
         DataManager.getInstance().getPreferenceManager().saveUserProfileData(userData);
+    }
+
+    private void saveUsersInDb() {
+        Call<UserListRes> call = DataManager.getInstance().getUsersListFromNetwork();
+        call.enqueue(new Callback<UserListRes>() {
+            @Override
+            public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
+                try {
+                    if (response.code() == 200) {
+                        List<Repository> allRepos = new ArrayList<Repository>();
+                        List<User> allUsers = new ArrayList<User>();
+
+                        for (UserListRes.UserData userRes : response.body().getData()) {
+                            allRepos.addAll(getRepositoriesListFromUserRes(userRes));
+                            allUsers.add(new User(userRes));
+                        }
+
+                        mRepositoryDao.insertOrReplaceInTx(allRepos);
+                        mUserDao.insertOrReplaceInTx(allUsers);
+
+                    } else {
+                        showSnackBar("Список пользователей не может быть получен.");
+                    }
+                } catch (NullPointerException e) {
+                    showSnackBar("Непорядок!");
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserListRes> call, Throwable t) {
+                showSnackBar("Ошибочка вышла!");
+            }
+        });
+    }
+
+    private List<Repository> getRepositoriesListFromUserRes(UserListRes.UserData userData) {
+        final String userId = userData.getId();
+
+        List<Repository> repositories = new ArrayList<>();
+        for (UserListRes.Repo repo : userData.getRepositories().getRepo()) {
+            repositories.add(new Repository(repo, userId));
+        }
+
+        return repositories;
     }
 }

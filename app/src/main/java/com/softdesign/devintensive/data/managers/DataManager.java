@@ -2,15 +2,21 @@ package com.softdesign.devintensive.data.managers;
 
 import android.content.Context;
 
+import com.softdesign.devintensive.data.network.PicassoCache;
 import com.softdesign.devintensive.data.network.RestService;
 import com.softdesign.devintensive.data.network.ServiceGenerator;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UploadProfilePhotoRes;
 import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
+import com.softdesign.devintensive.data.storage.model.DaoSession;
+import com.softdesign.devintensive.data.storage.model.User;
 import com.softdesign.devintensive.utils.DevIntensiveApplication;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -27,11 +33,16 @@ public class DataManager {
     private Context mContext;
     private PreferencesManager mPreferenceManager;
     private RestService mRestService;
+    private Picasso mPicasso;
+
+    private DaoSession mDaoSession;
 
     private DataManager() {
         mPreferenceManager = new PreferencesManager();
         mContext = DevIntensiveApplication.getAppContext();
         mRestService = ServiceGenerator.createService(RestService.class);
+        mPicasso = new PicassoCache(mContext).getPicassoInstance();
+        mDaoSession = DevIntensiveApplication.getDaoSession();
     }
 
     private static class DataManagerHolder {
@@ -48,6 +59,10 @@ public class DataManager {
 
     public Context getContext() {
         return mContext;
+    }
+
+    public Picasso getPicasso () {
+        return mPicasso;
     }
 
     // region ============== NETWORK ==============
@@ -81,11 +96,22 @@ public class DataManager {
      *
      * @return модельный класс типа {@link UserListRes}, хранящий информацию о зарегистрированных пользователях
      */
-    public Call<UserListRes> getUsersList() {
+    public Call<UserListRes> getUsersListFromNetwork() {
         return mRestService.getUserList();
     }
     // endregion
 
     // region ============== DATABASE ==============
+
+
+    public DaoSession getDaoSession() {
+        return mDaoSession;
+    }
+
+    public List<User> getUsersListFromDb () {
+        List<User> temp = new ArrayList<>();
+        return temp;
+    }
+
     // endregion
 }

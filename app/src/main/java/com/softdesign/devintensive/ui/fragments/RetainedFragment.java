@@ -36,7 +36,7 @@ public class RetainedFragment extends Fragment {
     }
 
     public void loadUsers(final NetworkRequestListener listener) {
-        Call<UserListRes> call = DataManager.getInstance().getUsersList();
+        Call<UserListRes> call = DataManager.getInstance().getUsersListFromNetwork();
         call.enqueue(new Callback<UserListRes>() {
             @Override
             public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {

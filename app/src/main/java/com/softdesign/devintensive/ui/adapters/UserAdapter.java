@@ -1,6 +1,7 @@
 package com.softdesign.devintensive.ui.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,9 +14,12 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.ui.views.AspectRatioImageView;
-import com.squareup.picasso.Picasso;
+import com.softdesign.devintensive.utils.ConstantManager;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.List;
  */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements Filterable {
 
+    private static final String TAG = ConstantManager.TAG_PREFIX + " UserAdapter";
     Context mContext;
     List<UserListRes.UserData> mUsers;
     List<UserListRes.UserData> mFullList;
@@ -47,15 +52,52 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     @Override
-    public void onBindViewHolder(UserViewHolder holder, int position) {
-        UserListRes.UserData user = mUsers.get(position);
+    public void onBindViewHolder(final UserViewHolder holder, int position) {
+        final UserListRes.UserData user = mUsers.get(position);
+        final String userPhoto;
+
+        if (user.getPublicInfo().getPhoto().isEmpty()) {
+            userPhoto = "null";
+            Log.e(TAG, "onBindViewHolder: user with name " + user.getFullName() + " has empty name");
+        } else {
+            userPhoto = user.getPublicInfo().getPhoto();
+        }
+
         try {
-            Picasso.with(mContext)
-                    .load(user.getPublicInfo().getPhoto())
-                    .placeholder(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
-                    .error(ContextCompat.getDrawable(mContext, R.drawable.user_bg))
+            DataManager.getInstance().getPicasso()
+                    .load(userPhoto)
+                    .error(holder.mDummy)
+                    .placeholder(holder.mDummy)
                     .fit()
-                    .into(holder.mUserPhoto);
+                    .centerCrop()
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(holder.mUserPhoto, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d(TAG, "load from cache");
+                        }
+
+                        @Override
+                        public void onError() {
+                            DataManager.getInstance().getPicasso()
+                                    .load(userPhoto)
+                                    .error(holder.mDummy)
+                                    .placeholder(holder.mDummy)
+                                    .fit()
+                                    .centerCrop()
+                                    .into(holder.mUserPhoto, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.d(TAG, "load from cache");
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            Log.d(TAG, "Could not fetch image");
+                                        }
+                                    });
+                        }
+                    });
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -91,6 +133,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         protected TextView mProjects;
         protected TextView mBio;
         protected AspectRatioImageView mImage;
+        protected Drawable mDummy;
 
         protected Button mShowMore;
         private CustomClickListener mListener;
@@ -109,6 +152,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             mCodeLines = (TextView) itemView.findViewById(R.id.item_user_code_lines);
             mProjects = (TextView) itemView.findViewById(R.id.item_user_projects);
             mBio = (TextView) itemView.findViewById(R.id.item_user_bio);
+            mDummy = ContextCompat.getDrawable(mUserPhoto.getContext(), R.drawable.user_bg);
 
             mShowMore.setOnClickListener(this);
             mImage.setOnClickListener(this);

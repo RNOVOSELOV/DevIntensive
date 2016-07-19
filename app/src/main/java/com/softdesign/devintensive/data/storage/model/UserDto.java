@@ -30,7 +30,7 @@ public class UserDto implements Parcelable {
 
         mRepositories = new ArrayList<>();
         for (UserListRes.Repo repo : userData.getRepositories().getRepo()) {
-            mRepositories.add(repo.getRepoAddress());
+            mRepositories.add(repo.getGit());
         }
     }
 
