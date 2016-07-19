@@ -28,22 +28,17 @@ import java.util.List;
 /**
  * Created by roman on 15.07.16.
  */
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements Filterable {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private static final String TAG = ConstantManager.TAG_PREFIX + " UserAdapter";
     Context mContext;
     List<User> mUsers;
-    List<User> mFullList;
     UserViewHolder.CustomClickListener mCustomClickListener;
-    private CustomFilter mFilter;
 
     public UserAdapter(Context mContext, List<User> mUsers, UserViewHolder.CustomClickListener customClickListener) {
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.mCustomClickListener = customClickListener;
-        mFullList = new ArrayList<>();
-        mFullList.addAll(mUsers);
-        mFilter = new CustomFilter(UserAdapter.this);
     }
 
     @Override
@@ -120,11 +115,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return mUsers.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return mFilter;
-    }
-
     public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         protected AspectRatioImageView mUserPhoto;
@@ -133,7 +123,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         protected TextView mCodeLines;
         protected TextView mProjects;
         protected TextView mBio;
-        protected AspectRatioImageView mImage;
         protected Drawable mDummy;
 
         protected Button mShowMore;
@@ -143,8 +132,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             super(itemView);
 
             mListener = customClickListener;
-
-            mImage = ((AspectRatioImageView) itemView.findViewById(R.id.item_image));
             mShowMore = ((Button) itemView.findViewById(R.id.item_user_info_btn));
             mUserPhoto = (AspectRatioImageView) itemView.findViewById(R.id.item_image);
 
@@ -156,7 +143,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             mDummy = ContextCompat.getDrawable(mUserPhoto.getContext(), R.drawable.user_bg);
 
             mShowMore.setOnClickListener(this);
-            mImage.setOnClickListener(this);
+            mUserPhoto.setOnClickListener(this);
         }
 
         @Override
@@ -168,40 +155,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         public interface CustomClickListener {
             void onUserItemClickListener(int position);
-        }
-    }
-
-    public class CustomFilter extends Filter {
-
-        private UserAdapter mAdapter;
-
-        public CustomFilter(UserAdapter mAdapter) {
-            super();
-            this.mAdapter = mAdapter;
-        }
-
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            mUsers.clear();
-            final FilterResults results = new FilterResults();
-            if (charSequence.length() == 0) {
-                mUsers.addAll(mFullList);
-            } else {
-                final String filterPattern = charSequence.toString().toLowerCase().trim();
-                for (final User data : mFullList) {
-                    if (data.getFullName().toLowerCase().trim().contains(filterPattern.toLowerCase().trim())) {
-                        mUsers.add(data);
-                    }
-                }
-            }
-            results.values = mUsers;
-            results.count = mUsers.size();
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            mAdapter.notifyDataSetChanged();
         }
     }
 }

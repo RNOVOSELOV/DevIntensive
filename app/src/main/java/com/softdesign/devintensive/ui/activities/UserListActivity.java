@@ -2,6 +2,7 @@ package com.softdesign.devintensive.ui.activities;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,21 +14,23 @@ import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
 import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
-import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.storage.model.User;
 import com.softdesign.devintensive.data.storage.model.UserDto;
 import com.softdesign.devintensive.ui.adapters.UserAdapter;
 import com.softdesign.devintensive.ui.fragments.RetainedFragment;
+import com.softdesign.devintensive.utils.AppConfig;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.RoundedTransformation;
 import com.squareup.picasso.Picasso;
@@ -37,7 +40,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UserListActivity extends BaseActivity implements SearchView.OnQueryTextListener, RetainedFragment.DataRequestListener {
+public class UserListActivity extends BaseActivity implements RetainedFragment.DataRequestListener {
 
     private static String TAG = ConstantManager.TAG_PREFIX + " UserListActivity";
 
@@ -61,6 +64,8 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
 
     private RetainedFragment dataFragment;
     private FragmentManager fragmentManager;
+    private String mQuery;
+    private Handler mHandler;
 
     @Override
 
@@ -76,7 +81,7 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
         mDataManager = DataManager.getInstance();
         setupToolbar();
         setupDrawer();
-
+        mHandler = new Handler();
         fragmentManager = getFragmentManager();
         dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
         if (dataFragment == null) {
@@ -89,18 +94,16 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
                 e.printStackTrace();
             }
         } else {
-            mUsers = dataFragment.getData();
-            createAdapter();
+            createAdapter(dataFragment.getData());
         }
     }
 
 
     @Override
     public void onDataReceived(List<User> data) {
-        mUsers = data;
         hideProgress();
-        if (mUsers.size() > 0) {
-            createAdapter();
+        if (data.size() > 0) {
+            createAdapter(data);
         } else {
             showSnackBar("Список пользователей не может быть загружен");
         }
@@ -125,15 +128,41 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
         }
     }
 */
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint("Введите имя или его часть");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-        return true;
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                showUserByQuery(newText);
+                return false;
+            }
+        });
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void showUserByQuery(String query) {
+        mQuery = query;
+
+        Runnable searchUsers = new Runnable() {
+            @Override
+            public void run() {
+                createAdapter(mDataManager.getUserListByName(mQuery));
+            }
+        };
+
+        mHandler.removeCallbacks(searchUsers);
+        mHandler.postDelayed(searchUsers, AppConfig.SEARCH_DELAY);
     }
 
     @Override
@@ -148,7 +177,8 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
-    private void createAdapter() {
+    private void createAdapter(List<User> users) {
+        mUsers = users;
         mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
             @Override
             public void onUserItemClickListener(int position) {
@@ -158,7 +188,7 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
                 startActivity(profileIntent);
             }
         });
-        mRecyclerView.setAdapter(mUserAdapter);
+        mRecyclerView.swapAdapter(mUserAdapter, false);
     }
 
     private void setupDrawer() {
@@ -213,16 +243,5 @@ public class UserListActivity extends BaseActivity implements SearchView.OnQuery
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        mUserAdapter.getFilter().filter(newText);
-        return true;
     }
 }

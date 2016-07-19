@@ -123,5 +123,19 @@ public class DataManager {
         return userList;
     }
 
+    public List<User> getUserListByName(String query) {
+        List<User> userList = new ArrayList<>();
+        try {
+            userList = mDaoSession.queryBuilder(User.class)
+                    .where(UserDao.Properties.Rating.gt(0), UserDao.Properties.SearchName.like("%" + query.toUpperCase() + "%"))
+                    .orderDesc(UserDao.Properties.CodeLines)
+                    .build()
+                    .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
+
     // endregion
 }
