@@ -1,6 +1,5 @@
 package com.softdesign.devintensive.ui.activities;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
@@ -23,7 +22,9 @@ import android.widget.ImageView;
 
 import android.widget.TextView;
 
+import com.redmadrobot.chronos.ChronosConnector;
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.business.LoadDataFromDbOperation;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.storage.model.User;
@@ -61,14 +62,16 @@ public class UserListActivity extends BaseActivity {
     private String mQuery;
     private Handler mHandler;
     private Runnable searchUsers;
+    private ChronosConnector mChronosConnector = new ChronosConnector();
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
-
         ButterKnife.bind(this);
+
+        mChronosConnector.onCreate(this, savedInstanceState);
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(manager);
@@ -81,21 +84,14 @@ public class UserListActivity extends BaseActivity {
             @Override
             public void run() {
                 UserListActivity.this.showProgress();
-                createAdapter(mDataManager.getUserListByName(mQuery));
-                UserListActivity.this.hideProgress();
+                mChronosConnector.runOperation(new LoadDataFromDbOperation(mQuery), false);
             }
         };
 
         showProgress();
-        mUsers = DataManager.getInstance().getUserListByName("");
-        if (mUsers.size() > 0) {
-            createAdapter(mUsers);
-        } else {
-            showSnackBar("Список пользователей не может быть загружен");
-        }
-        hideProgress();
+        mChronosConnector.runOperation(new LoadDataFromDbOperation(), false);
 
-/*
+        /*
         FragmentManager fragmentManager = getFragmentManager();
         dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
         if (dataFragment == null) {
@@ -133,6 +129,38 @@ public class UserListActivity extends BaseActivity {
 */
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mChronosConnector.onResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mChronosConnector.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mChronosConnector.onPause();
+    }
+
+    public void onOperationFinished(final LoadDataFromDbOperation.Result result) {
+        hideProgress();
+        if (result.isSuccessful()) {
+            mUsers = result.getOutput();
+            if (mUsers.size() > 0) {
+                createAdapter(mUsers);
+            } else {
+                showSnackBar("Список пользователей пуст");
+            }
+        } else {
+            showSnackBar("Ошибка загрузки списка пользователей");
+        }
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
@@ -158,7 +186,8 @@ public class UserListActivity extends BaseActivity {
         mQuery = query;
         mHandler.removeCallbacks(searchUsers);
         if (query.isEmpty()) {
-            createAdapter(mUsers);
+            showProgress();
+            mChronosConnector.runOperation(new LoadDataFromDbOperation(), false);
         } else {
             mHandler.postDelayed(searchUsers, AppConfig.SEARCH_DELAY);
         }

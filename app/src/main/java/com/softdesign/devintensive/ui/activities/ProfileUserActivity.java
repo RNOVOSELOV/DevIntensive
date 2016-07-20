@@ -77,11 +77,6 @@ public class ProfileUserActivity extends BaseActivity {
             }
         });
 
-        int baseListViewHeight = getResources().getDimensionPixelSize(R.dimen.size_bigger_80);
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRepoList.getLayoutParams();
-        lp.height = baseListViewHeight * repo.size();
-        mRepoList.setLayoutParams(lp);
-
         mUserBio.setText(userDto.getmBio());
 
         mRaiting.setText(userDto.getmRating());

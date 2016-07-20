@@ -3,26 +3,28 @@ package com.softdesign.devintensive.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.CardView;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.redmadrobot.chronos.ChronosConnector;
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.business.SaveDataToDbOperation;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.network.req.UserLoginReq;
 import com.softdesign.devintensive.data.network.res.UserListRes;
 import com.softdesign.devintensive.data.network.res.UserModelRes;
 import com.softdesign.devintensive.data.storage.model.Repository;
-import com.softdesign.devintensive.data.storage.model.RepositoryDao;
 import com.softdesign.devintensive.data.storage.model.User;
-import com.softdesign.devintensive.data.storage.model.UserDao;
-import com.softdesign.devintensive.utils.AppConfig;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.NetworkHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +46,12 @@ public class AuthActivity extends BaseActivity {
     EditText mPassword;
     @BindView(R.id.auth_chb_save_login)
     CheckBox saveLoginCheckBox;
+    @BindView(R.id.auth_cardview)
+    CardView mCardView;
 
     private DataManager mDataManager;
-    private RepositoryDao mRepositoryDao;
-    private UserDao mUserDao;
+
+    private final ChronosConnector mChronosConnector = new ChronosConnector();
 
     boolean isTokenFailed;  // FALSE, если в процессе работы токен аутотентификации стал не валидным
     // пользователя выкидывает на активити авторизации, появляется соответствующее сообщение
@@ -57,10 +61,9 @@ public class AuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
         ButterKnife.bind(this);
+        mChronosConnector.onCreate(this, savedInstanceState);
 
         mDataManager = DataManager.getInstance();
-        mUserDao = mDataManager.getDaoSession().getUserDao();
-        mRepositoryDao = mDataManager.getDaoSession().getRepositoryDao();
 
         Intent intent = getIntent();
         isTokenFailed = intent.getBooleanExtra(ConstantManager.USER_AUTORIZATION_FAILED, false);
@@ -76,9 +79,34 @@ public class AuthActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mChronosConnector.onResume();
         if (isTokenFailed) {
             showSnackBar("Произошла ошибка работы с сетью, необходима повторная аутотентификация.");
             isTokenFailed = true;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mChronosConnector.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NotNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mChronosConnector.onSaveInstanceState(outState);
+    }
+
+    public void onOperationFinished(final SaveDataToDbOperation.Result result) {
+        AuthActivity.this.hideProgress();
+        if (result.isSuccessful()) {
+            Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
+            startActivity(loginIntent);
+            ActivityCompat.finishAfterTransition(AuthActivity.this);
+        } else {
+            showSnackBar("Ошибка сохранения пользователей.");
+            mCardView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -95,6 +123,7 @@ public class AuthActivity extends BaseActivity {
      */
     @OnClick(R.id.auth_login_button)
     public void onSignInClicked() {
+        mCardView.setVisibility(View.INVISIBLE);
         signIn();
     }
 
@@ -136,17 +165,6 @@ public class AuthActivity extends BaseActivity {
         saveUserValues(response);
         saveUserProfileValues(response);
         saveUsersInDb();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                AuthActivity.this.hideProgress();
-                Intent loginIntent = new Intent(AuthActivity.this, MainActivity.class);
-                startActivity(loginIntent);
-                ActivityCompat.finishAfterTransition(AuthActivity.this);
-            }
-        }, AppConfig.START_DELAY);
     }
 
     /**
@@ -166,13 +184,16 @@ public class AuthActivity extends BaseActivity {
                         } catch (NullPointerException e) {
                             hideProgress();
                             e.printStackTrace();
+                            mCardView.setVisibility(View.VISIBLE);
                         }
                     } else if (response.code() == 404) {
                         hideProgress();
                         showSnackBar("Неверный логин или пароль");
+                        mCardView.setVisibility(View.VISIBLE);
                     } else {
                         hideProgress();
                         showSnackBar("Видимо что-то случилось");
+                        mCardView.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -184,6 +205,7 @@ public class AuthActivity extends BaseActivity {
             });
         } else {
             showSnackBar("Сеть недоступна, попробуйте позже");
+            mCardView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -240,22 +262,22 @@ public class AuthActivity extends BaseActivity {
                             allRepos.addAll(getRepositoriesListFromUserRes(userRes));
                             allUsers.add(new User(userRes));
                         }
-
-                        mRepositoryDao.insertOrReplaceInTx(allRepos);
-                        mUserDao.insertOrReplaceInTx(allUsers);
-
+                        mChronosConnector.runOperation(new SaveDataToDbOperation(allRepos, allUsers), false);
                     } else {
                         showSnackBar("Список пользователей не может быть получен.");
+                        mCardView.setVisibility(View.VISIBLE);
                     }
                 } catch (NullPointerException e) {
                     showSnackBar("Непорядок!");
                     e.printStackTrace();
+                    mCardView.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onFailure(Call<UserListRes> call, Throwable t) {
                 showSnackBar("Ошибочка вышла!");
+                mCardView.setVisibility(View.VISIBLE);
             }
         });
     }
