@@ -40,4 +40,22 @@
     <string name="string_item_user_goto">Просмотр</string>
     <string name="hint_search">Поиск</string>
     <string name="auth_layout_save_login_cb">Запомнить логин</string>
+    <string name="auth_network_error">Произошла ошибка работы с сетью, необходима повторная аутотентификация.</string>
+    <string name="auth_save_users_error">Ошибка сохранения пользователей.</string>
+
+    <string name="auth_devintensive_forgot_pass_url" translatable="false">http://devintensive.softdesign-apps.ru/forgotpass</string>
+    <string name="auth_incorrect_login_or_password">Неверный логин или пароль</string>
+    <string name="auth_something_wrong">Видимо что-то случилось</string>
+    <string name="auth_login_error">Ошибка входа, попробуйте позже</string>
+    <string name="auth_network_is_not_availabled">Сеть недоступна, попробуйте позже</string>
+    <string name="auth_can_not_receive_users_list">Список пользователей не может быть получен.</string>
+    <string name="auth_json_parse_error">Непорядок!</string>
+    <string name="auth_retrofit_error">Ошибочка вышла!</string>
+    <string name="main_photo_uploaded">Фото успешно загружено</string>
+    <string name="main_something_wrong">Видимо что-то случилось</string>
+    <string name="main_upload_error">Ошибка загрузки, попробуйте позже</string>
+    <string name="main_network_is_nor_available">Сеть недоступна</string>
+    <string name="list_emty_list">Список пользователей пуст</string>
+    <string name="list_error_download_users_list">Ошибка загрузки списка пользователей</string>
+    <string name="list_enter_users_name">Введите имя или его часть</string>
 </resources>

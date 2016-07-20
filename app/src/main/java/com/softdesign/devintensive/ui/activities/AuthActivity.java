@@ -81,7 +81,7 @@ public class AuthActivity extends BaseActivity {
         super.onResume();
         mChronosConnector.onResume();
         if (isTokenFailed) {
-            showSnackBar("Произошла ошибка работы с сетью, необходима повторная аутотентификация.");
+            showSnackBar(getString(R.string.auth_network_error));
             isTokenFailed = true;
         }
     }
@@ -105,7 +105,7 @@ public class AuthActivity extends BaseActivity {
             startActivity(loginIntent);
             ActivityCompat.finishAfterTransition(AuthActivity.this);
         } else {
-            showSnackBar("Ошибка сохранения пользователей.");
+            showSnackBar(getString(R.string.auth_save_users_error));
             mCardView.setVisibility(View.VISIBLE);
         }
     }
@@ -140,7 +140,7 @@ public class AuthActivity extends BaseActivity {
      * Метод вызывается, если пользователь нажал на "Забыли пароль?"
      */
     private void rememberPassword() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://devintensive.softdesign-apps.ru/forgotpass"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.auth_devintensive_forgot_pass_url)));
         startActivity(intent);
     }
 
@@ -188,11 +188,11 @@ public class AuthActivity extends BaseActivity {
                         }
                     } else if (response.code() == 404) {
                         hideProgress();
-                        showSnackBar("Неверный логин или пароль");
+                        showSnackBar(getString(R.string.auth_incorrect_login_or_password));
                         mCardView.setVisibility(View.VISIBLE);
                     } else {
                         hideProgress();
-                        showSnackBar("Видимо что-то случилось");
+                        showSnackBar(getString(R.string.auth_something_wrong));
                         mCardView.setVisibility(View.VISIBLE);
                     }
                 }
@@ -200,11 +200,11 @@ public class AuthActivity extends BaseActivity {
                 @Override
                 public void onFailure(Call<UserModelRes> call, Throwable t) {
                     hideProgress();
-                    showSnackBar("Ошибка входа, попробуйте позже");
+                    showSnackBar(getString(R.string.auth_login_error));
                 }
             });
         } else {
-            showSnackBar("Сеть недоступна, попробуйте позже");
+            showSnackBar(getString(R.string.auth_network_is_not_availabled));
             mCardView.setVisibility(View.VISIBLE);
         }
     }
@@ -264,11 +264,11 @@ public class AuthActivity extends BaseActivity {
                         }
                         mChronosConnector.runOperation(new SaveDataToDbOperation(allRepos, allUsers), false);
                     } else {
-                        showSnackBar("Список пользователей не может быть получен.");
+                        showSnackBar(getString(R.string.auth_can_not_receive_users_list));
                         mCardView.setVisibility(View.VISIBLE);
                     }
                 } catch (NullPointerException e) {
-                    showSnackBar("Непорядок!");
+                    showSnackBar(getString(R.string.auth_json_parse_error));
                     e.printStackTrace();
                     mCardView.setVisibility(View.VISIBLE);
                 }
@@ -276,7 +276,7 @@ public class AuthActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<UserListRes> call, Throwable t) {
-                showSnackBar("Ошибочка вышла!");
+                showSnackBar(getString(R.string.auth_retrofit_error)    );
                 mCardView.setVisibility(View.VISIBLE);
             }
         });

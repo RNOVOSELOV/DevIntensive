@@ -91,7 +91,8 @@ public class UserListActivity extends BaseActivity {
         showProgress();
         mChronosConnector.runOperation(new LoadDataFromDbOperation(), false);
 
-        /*
+        /* // RetainedFragment
+
         FragmentManager fragmentManager = getFragmentManager();
         dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
         if (dataFragment == null) {
@@ -153,10 +154,10 @@ public class UserListActivity extends BaseActivity {
             if (mUsers.size() > 0) {
                 createAdapter(mUsers);
             } else {
-                showSnackBar("Список пользователей пуст");
+                showSnackBar(getString(R.string.list_emty_list));
             }
         } else {
-            showSnackBar("Ошибка загрузки списка пользователей");
+            showSnackBar(getString(R.string.list_error_download_users_list));
         }
     }
 
@@ -166,7 +167,7 @@ public class UserListActivity extends BaseActivity {
 
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint("Введите имя или его часть");
+        searchView.setQueryHint(getString(R.string.list_enter_users_name));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
