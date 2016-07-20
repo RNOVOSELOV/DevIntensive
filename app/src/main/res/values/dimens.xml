@@ -57,4 +57,5 @@
     <dimen name="elevation_cardview">8dp</dimen>
     <dimen name="radius_card">2dp</dimen>
     <dimen name="spacing_auth_button">128dp</dimen>
+    <dimen name="size_progress">48dp</dimen>
 </resources>
