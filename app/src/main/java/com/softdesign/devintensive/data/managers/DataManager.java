@@ -114,7 +114,7 @@ public class DataManager {
         try {
             userList = mDaoSession.queryBuilder(User.class)
                     .where(UserDao.Properties.CodeLines.gt(0))
-                    .orderDesc(UserDao.Properties.CodeLines)
+                    .orderDesc(UserDao.Properties.Rating)
                     .build()
                     .list();
         } catch (Exception e) {
@@ -128,7 +128,7 @@ public class DataManager {
         try {
             userList = mDaoSession.queryBuilder(User.class)
                     .where(UserDao.Properties.Rating.gt(0), UserDao.Properties.SearchName.like("%" + query.toUpperCase() + "%"))
-                    .orderDesc(UserDao.Properties.CodeLines)
+                    .orderDesc(UserDao.Properties.Rating)
                     .build()
                     .list();
         } catch (Exception e) {
