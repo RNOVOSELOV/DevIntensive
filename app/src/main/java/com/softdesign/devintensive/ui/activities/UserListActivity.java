@@ -29,7 +29,6 @@ import com.softdesign.devintensive.data.managers.PreferencesManager;
 import com.softdesign.devintensive.data.storage.model.User;
 import com.softdesign.devintensive.data.storage.model.UserDto;
 import com.softdesign.devintensive.ui.adapters.UserAdapter;
-import com.softdesign.devintensive.ui.fragments.RetainedFragment;
 import com.softdesign.devintensive.utils.AppConfig;
 import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.RoundedTransformation;
@@ -40,7 +39,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UserListActivity extends BaseActivity implements RetainedFragment.DataRequestListener {
+public class UserListActivity extends BaseActivity {
 
     private static String TAG = ConstantManager.TAG_PREFIX + " UserListActivity";
 
@@ -59,7 +58,6 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
     private DataManager mDataManager;
     private List<User> mUsers;
 
-    private RetainedFragment dataFragment;
     private String mQuery;
     private Handler mHandler;
     private Runnable searchUsers;
@@ -82,9 +80,22 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
         searchUsers = new Runnable() {
             @Override
             public void run() {
+                UserListActivity.this.showProgress();
                 createAdapter(mDataManager.getUserListByName(mQuery));
+                UserListActivity.this.hideProgress();
             }
         };
+
+        showProgress();
+        mUsers = DataManager.getInstance().getUserListByName("");
+        if (mUsers.size() > 0) {
+            createAdapter(mUsers);
+        } else {
+            showSnackBar("Список пользователей не может быть загружен");
+        }
+        hideProgress();
+
+/*
         FragmentManager fragmentManager = getFragmentManager();
         dataFragment = ((RetainedFragment) fragmentManager.findFragmentByTag("user_data"));
         if (dataFragment == null) {
@@ -92,33 +103,22 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
             fragmentManager.beginTransaction().add(dataFragment, "user_data").commit();
             showProgress();
             try {
-                dataFragment.loadUsersFromDb(this);
+                dataFragment.loadUsers(this);
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         } else {
             createAdapter(dataFragment.getData());
         }
+*/
     }
 
-
-    @Override
-    public void onDataReceived(List<User> data) {
-        hideProgress();
-        if (data.size() > 0) {
-            createAdapter(data);
-        } else {
-            showSnackBar("Список пользователей не может быть загружен");
-        }
-    }
-
-/*
-    @Override
+    /*
     public void onDataReceived(int responseCode, List<UserListRes.UserData> data) {
         hideProgress();
         if (responseCode == 200) {
-            mUsers = data;
-            createAdapter ();
+//            mUsers = data;
+//            createAdapter ();
         } else if (responseCode == 401) {
             Intent intent = new Intent(UserListActivity.this, AuthActivity.class);
             intent.putExtra(ConstantManager.USER_AUTORIZATION_FAILED, true);
@@ -158,7 +158,7 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
         mQuery = query;
         mHandler.removeCallbacks(searchUsers);
         if (query.isEmpty()) {
-            createAdapter(dataFragment.getData());
+            createAdapter(mUsers);
         } else {
             mHandler.postDelayed(searchUsers, AppConfig.SEARCH_DELAY);
         }
@@ -176,7 +176,7 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
-    private void createAdapter(List<User> users) {
+    private void createAdapter(final List<User> users) {
         mUsers = users;
         UserAdapter mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
             @Override
@@ -243,4 +243,5 @@ public class UserListActivity extends BaseActivity implements RetainedFragment.D
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+
 }

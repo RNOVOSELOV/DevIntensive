@@ -571,7 +571,7 @@ public class MainActivity extends BaseActivity {
             public void onFocusChange(View view, boolean b) {
                 if (b) {
                     final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
-                    lp.height = getResources().getDimensionPixelSize(R.dimen.size_bigger_88);
+                    lp.height = getResources().getDimensionPixelSize(R.dimen.size_bigger_80);
                     view.setLayoutParams(lp);
                     Log.d("TAG", "222");
                     //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);

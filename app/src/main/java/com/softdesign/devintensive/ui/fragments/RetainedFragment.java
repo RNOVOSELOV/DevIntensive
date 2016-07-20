@@ -19,11 +19,10 @@ import retrofit2.Response;
  */
 public class RetainedFragment extends Fragment {
 
-    private List<User> mData;
+    private List<UserListRes.UserData> mData;
 
     public interface DataRequestListener {
-//        void onDataReceived(int responseCode, List<UserListRes.UserData> data);
-        void onDataReceived(List<User> data);
+        void onDataReceived(int responseCode, List<UserListRes.UserData> data);
     }
 
     @Override
@@ -37,12 +36,7 @@ public class RetainedFragment extends Fragment {
         super.onAttach(context);
     }
 
-    public void loadUsersFromDb(final DataRequestListener listener) {
-        mData = DataManager.getInstance().getUsersListFromDb();
-        listener.onDataReceived(mData);
-    }
-
-/*    public void loadUsers(final DataRequestListener listener) {
+    public void loadUsers(final DataRequestListener listener) {
         Call<UserListRes> call = DataManager.getInstance().getUsersListFromNetwork();
         call.enqueue(new Callback<UserListRes>() {
             @Override
@@ -71,9 +65,9 @@ public class RetainedFragment extends Fragment {
             }
         });
     }
-    */
 
-    public List<User> getData() {
+
+    public List<UserListRes.UserData> getData() {
         return mData;
     }
 }
