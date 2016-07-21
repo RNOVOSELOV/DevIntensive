@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.redmadrobot.chronos.ChronosConnector;
 import com.softdesign.devintensive.R;
+import com.softdesign.devintensive.data.business.DeleteUserFromDb;
 import com.softdesign.devintensive.data.business.LoadDataFromDbOperation;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.managers.PreferencesManager;
@@ -36,6 +38,7 @@ import com.softdesign.devintensive.utils.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,6 +65,7 @@ public class UserListActivity extends BaseActivity {
     private String mQuery;
     private Handler mHandler;
     private Runnable searchUsers;
+    UserAdapter mUserAdapter;
     private ChronosConnector mChronosConnector = new ChronosConnector();
 
     @Override
@@ -90,6 +94,28 @@ public class UserListActivity extends BaseActivity {
 
         showProgress();
         mChronosConnector.runOperation(new LoadDataFromDbOperation(), false);
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = mRecyclerView.getChildAdapterPosition(viewHolder.itemView);
+                try {
+                    mChronosConnector.runOperation(new DeleteUserFromDb(mUsers.get(position)), false);
+                    mUsers.remove(position);
+                    mUserAdapter.notifyItemRemoved(position);
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         /* // RetainedFragment
 
@@ -161,6 +187,14 @@ public class UserListActivity extends BaseActivity {
         }
     }
 
+    public void onOperationFinished(final DeleteUserFromDb.Result result) {
+        if (result.isSuccessful()) {
+            showSnackBar("Пользователь \"" + result.getOutput() + "\" успешно удален.");
+        } else {
+            showSnackBar("Ошибка удаления пользователя");
+        }
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -208,7 +242,7 @@ public class UserListActivity extends BaseActivity {
 
     private void createAdapter(final List<User> users) {
         mUsers = users;
-        UserAdapter mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
+        mUserAdapter = new UserAdapter(UserListActivity.this, mUsers, new UserAdapter.UserViewHolder.CustomClickListener() {
             @Override
             public void onUserItemClickListener(int position) {
                 UserDto user = new UserDto(mUsers.get(position));

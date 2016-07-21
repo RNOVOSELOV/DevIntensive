@@ -137,5 +137,9 @@ public class DataManager {
         return userList;
     }
 
+    public void deleteUser(User user) {
+        mDaoSession.delete(user);
+    }
+
     // endregion
 }
