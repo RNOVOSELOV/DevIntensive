@@ -139,6 +139,8 @@ public class MainActivity extends BaseActivity {
         display.getSize(size);
         int width = size.x;
 
+//Реализованный синглтон созданный исспользуя Picasso Builder хранящийся в  Datamanager  надо было исспользовать тут тоже чтобы 
+//получить Instance Picasso c уже готовыми настройками кеширования и контекста
         Picasso.with(this)
                 .load(DataManager.getInstance().getPreferenceManager().loadUserPhoto())
                 .placeholder(R.drawable.user_bg)
