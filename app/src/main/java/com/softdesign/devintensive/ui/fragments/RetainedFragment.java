@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.res.UserListRes;
+import com.softdesign.devintensive.data.storage.model.User;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class RetainedFragment extends Fragment {
 
     private List<UserListRes.UserData> mData;
 
-    public interface NetworkRequestListener {
+    public interface DataRequestListener {
         void onDataReceived(int responseCode, List<UserListRes.UserData> data);
     }
 
@@ -35,8 +36,8 @@ public class RetainedFragment extends Fragment {
         super.onAttach(context);
     }
 
-    public void loadUsers(final NetworkRequestListener listener) {
-        Call<UserListRes> call = DataManager.getInstance().getUsersList();
+    public void loadUsers(final DataRequestListener listener) {
+        Call<UserListRes> call = DataManager.getInstance().getUsersListFromNetwork();
         call.enqueue(new Callback<UserListRes>() {
             @Override
             public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
@@ -64,6 +65,7 @@ public class RetainedFragment extends Fragment {
             }
         });
     }
+
 
     public List<UserListRes.UserData> getData() {
         return mData;

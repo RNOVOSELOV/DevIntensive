@@ -52,6 +52,10 @@ public class UserListRes {
         @Expose
         private String updated;
 
+        public String getId() {
+            return id;
+        }
+
         public Repositories getRepositories() {
             return repositories;
         }
@@ -144,8 +148,12 @@ public class UserListRes {
         @Expose
         private String title;
 
-        public String getRepoAddress() {
+        public String getGit() {
             return git;
+        }
+
+        public String getId() {
+            return id;
         }
     }
 

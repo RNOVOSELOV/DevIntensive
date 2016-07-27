@@ -571,7 +571,7 @@ public class MainActivity extends BaseActivity {
             public void onFocusChange(View view, boolean b) {
                 if (b) {
                     final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
-                    lp.height = getResources().getDimensionPixelSize(R.dimen.size_bigger_88);
+                    lp.height = getResources().getDimensionPixelSize(R.dimen.size_bigger_80);
                     view.setLayoutParams(lp);
                     Log.d("TAG", "222");
                     //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -612,24 +612,24 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<UploadProfilePhotoRes> call, Response<UploadProfilePhotoRes> response) {
                         if (response.code() == 200) {
-                            showSnackBar("Фото успешно загружено");
+                            showSnackBar(getString(R.string.main_photo_uploaded));
                         } else if (response.code() == 401) {
                             Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                             intent.putExtra(ConstantManager.USER_AUTORIZATION_FAILED, true);
                             startActivity(intent);
                             ActivityCompat.finishAfterTransition(MainActivity.this);
                         } else {
-                            showSnackBar("Видимо что-то случилось");
+                            showSnackBar(getString(R.string.main_something_wrong));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<UploadProfilePhotoRes> call, Throwable t) {
-                        showSnackBar("Ошибка загрузки, попробуйте позже");
+                        showSnackBar(getString(R.string.main_upload_error));
                     }
                 });
             } else {
-                showSnackBar("Сеть недоступна");
+                showSnackBar(getString(R.string.main_network_is_nor_available));
             }
         }
     }
